@@ -4,22 +4,27 @@ LDFLAGS = -lGLEW -lGL -lglfw -ldl -lm
 
 # Source directories
 SRC_DIR = src
-COMMON_DIR = $(SRC_DIR)/common
-GEOMETRY_DIR = $(SRC_DIR)/geometry
-MATH_DIR = $(SRC_DIR)/math
 CAMERA_DIR = $(SRC_DIR)/camera
-WINDOW_DIR = $(SRC_DIR)/window
+COMMON_DIR = $(SRC_DIR)/common
+CONTROLS_DIR = $(SRC_DIR)/controls
+GEOMETRY_DIR = $(SRC_DIR)/geometry
 INPUT_DIR = $(SRC_DIR)/input
+MATH_DIR = $(SRC_DIR)/math
+UTILS_DIR = $(SRC_DIR)/utils
+WINDOW_DIR = $(SRC_DIR)/window
 
 # Source files
-COMMON_SRC = $(wildcard $(COMMON_DIR)/*.cpp)
-GEOMETRY_SRC = $(wildcard $(GEOMETRY_DIR)/*.cpp)
 CAMERA_SRC = $(wildcard $(CAMERA_DIR)/*.cpp)
-MATH_SRC = $(wildcard $(MATH_DIR)/*.cpp)
-WINDOW_SRC = $(wildcard $(WINDOW_DIR)/*.cpp)
+COMMON_SRC = $(wildcard $(COMMON_DIR)/*.cpp)
+CONTROLS_SRC = $(wildcard $(CONTROLS_DIR)/*.cpp)
+GEOMETRY_SRC = $(wildcard $(GEOMETRY_DIR)/*.cpp)
 INPUT_SRC = $(wildcard $(INPUT_DIR)/*.cpp)
+MATH_SRC = $(wildcard $(MATH_DIR)/*.cpp)
+UTILS_SRC = $(wildcard $(UTILS_DIR)/*.cpp)
+WINDOW_SRC = $(wildcard $(WINDOW_DIR)/*.cpp)
 MAIN_SRC = $(SRC_DIR)/main.cpp
-SRC = $(COMMON_SRC) $(MATH_SRC) $(INPUT_SRC) $(WINDOW_SRC) $(GEOMETRY_SRC) $(CAMERA_SRC) $(MAIN_SRC)
+
+SRC = $(CAMERA_SRC) $(COMMON_SRC) $(CONTROLS_SRC) $(GEOMETRY_SRC) $(INPUT_SRC) $(MATH_SRC) $(UTILS_SRC) $(WINDOW_SRC) $(MAIN_SRC)
 
 # Object files
 OBJ = $(SRC:.cpp=.o)

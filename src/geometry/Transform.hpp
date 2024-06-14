@@ -22,12 +22,16 @@ public:
 	const Vec3& getPosition() const;
 	const Vec3& getRotation() const;
 	const Vec3& getScale() const;
+	const float& getYaw() const;
+	const float& getPitch() const;
+	const float& getRoll() const;
 
 	void setScale(const Vec3& value);
 	void setPosition(const Vec3& newPosition);
 	void setRotation(const Vec3& newRotation);
 
 	void translate(const Vec3& offset);
+	void translateLocal(const Vec3& offset);
 	void rotate(const Vec3& degrees);
 	void scale(const Vec3& value);
 	void lookat(const Vec3& target);

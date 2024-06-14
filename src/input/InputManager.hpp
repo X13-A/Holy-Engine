@@ -6,6 +6,9 @@
 #include <map>
 
 #include "../math/Vec2.hpp"
+#include "../controls/CameraControls.hpp"
+
+class CameraControls;
 
 enum class KeyboardKey { Escape, Enter, Space, LCTRL, LSHIFT, Tab, Backspace, Left, Right, Up, Down, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, KeysCount};
 
@@ -55,10 +58,13 @@ class InputManager
 		};
 		Vec2 lastMousePos;
 		bool firstMouseInput = true;
+		CameraControls* cameraControls;
 
-    public:
+	public:
 		InputManager();
+
 		void init();
+		void attachControls(CameraControls* cameraControls);
 		void retrieveInputs(GLFWwindow* window);
 		void update(GLFWwindow* window);
 		bool isKeyPressed(KeyboardKey key);

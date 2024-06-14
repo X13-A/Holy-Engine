@@ -1,6 +1,7 @@
 #include "Transform.hpp"
 #include <vector>
 #include "../math/Math.hpp"
+#include <iostream>
 
 Transform::Transform(const Vec3& position, const Vec3& rotation, const Vec3& scale) : _transformMatrix(Mat4()), _position(position), _rotation(rotation), _scale(scale)
 {
@@ -29,6 +30,21 @@ const Vec3& Transform::getRotation() const
 const Vec3& Transform::getScale() const
 {
 	return _scale;
+}
+
+const float& Transform::getYaw() const
+{
+    return atan2(_transformMatrix(2, 0), _transformMatrix(0, 0));
+}
+
+const float& Transform::getPitch() const
+{
+    return asin(-_transformMatrix(1, 0));
+}
+
+const float& Transform::getRoll() const
+{
+    return atan2(_transformMatrix(2, 1), _transformMatrix(2, 2));
 }
 
 #pragma endregion
@@ -71,10 +87,23 @@ void Transform::translate(const Vec3& offset)
 	_transformMatrix.translate(offset);
 }
 
+void Transform::translateLocal(const Vec3& offset)
+{
+	// Vec3 localOffset;
+	// localOffset.x = right * offset.x;
+	// localOffset.y = up * offset.y;
+	// localOffset.z = forward * offset.z;
+
+	// _position += localOffset;
+	// _transformMatrix.translate(localOffset);
+}
+
 void Transform::rotate(const Vec3& degrees)
 {
 	Vec3 rads = radians(degrees);
 	_rotation += rads;
+	std::cout << degrees.y << ": " << rads.y << ": " << _rotation.y << std::endl;
+
 	_transformMatrix.rotate(rads);
 }
 
@@ -87,6 +116,12 @@ void Transform::scale(const Vec3& value)
 void Transform::lookat(const Vec3& target)
 {
     _transformMatrix = Mat4::lookAt(_position, target, Vec3(0.0f, 1.0f, 0.0f));
+
+	// Prevent lookat from affecting position
+	_transformMatrix(0, 3) = _position.x;
+	_transformMatrix(1, 3) = _position.y;
+	_transformMatrix(2, 3) = _position.z;
+	_transformMatrix(3, 3) = 1.0;
 
 	// update rot
 	Vec3 newRotation;

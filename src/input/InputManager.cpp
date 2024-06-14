@@ -1,6 +1,7 @@
 #include "InputManager.hpp"
 #include "../math/Vec2.hpp"
 #include <iostream>
+#include "../controls/CameraControls.hpp"
 
 InputManager::InputManager()
 {
@@ -10,6 +11,11 @@ InputManager::InputManager()
 void InputManager::init()
 {
 	keysPressed.resize(static_cast<size_t>(KeyboardKey::KeysCount), false);
+}
+
+void InputManager::attachControls(CameraControls* cameraControls)
+{
+	this->cameraControls = cameraControls;
 }
 
 void InputManager::retrieveInputs(GLFWwindow* window)
@@ -31,22 +37,27 @@ void InputManager::handleMouseMovement(float xpos, float ypos)
 		lastMousePos.y = ypos;
 	}
 
-	std::cout << xpos << ", " << ypos << std::endl;
-	// if (cameraControls == nullptr) return;
+	if ((Vec3(xpos, ypos, 0) - Vec3(lastMousePos.x, lastMousePos.y, 0)).length() > 100)
+	{
+		lastMousePos.x = xpos;
+		lastMousePos.y = ypos;
+		return;
+	}
+	if (cameraControls == nullptr) return;
 
-	// float offsetX = lastMousePos.x - xpos;
-	// float offsetY = lastMousePos.y - ypos;
+	float offsetX = lastMousePos.x - xpos;
+	float offsetY = lastMousePos.y - ypos;
+
 
 	lastMousePos.x = xpos;
 	lastMousePos.y = ypos;
 
-	// cameraControls->handleMouseMove(offsetX, offsetY);
+	cameraControls->handleMouseMove(offsetX, offsetY);
 }
 
 void InputManager::handleScroll(float xoffset, float yoffset)
 {
-	std::cout << xoffset << ", " << yoffset << std::endl;
-	// cameraControls->handleScroll(xoffset, yoffset);
+	cameraControls->handleScroll(xoffset, yoffset);
 }
 
 bool InputManager::isKeyPressed(KeyboardKey key)
