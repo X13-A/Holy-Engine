@@ -6,11 +6,13 @@
 #include <vector>
 #include "Vertex.hpp"
 #include "../common/GLShader.h"
+#include "Transform.hpp"
+#include "../camera/Camera.hpp"
 
 class Mesh
 {
 public:
-    GLuint texID1, texID2;
+    GLuint texID;
     GLShader *shader;
     GLuint VBO, VAO, EBO;
 
@@ -20,8 +22,8 @@ public:
     void Load(const std::string& filename);
     void Init();
     void Destroy();
-    void Draw();
-    void SetTexture(const std::string& filename, int slot = 0);
+    void Draw(Transform& transform, Camera& camera);
+    void SetTexture(const std::string& filename);
 };
 
 #endif

@@ -4,6 +4,8 @@
 #include "../math/Mat4.hpp"
 #include <GLFW/glfw3.h>
 #include "mesh_loader.hpp"
+#include "Transform.hpp"
+#include "../camera/Camera.hpp"
 
 void Mesh::Load(const std::string& filename)
 {
@@ -71,38 +73,26 @@ void Mesh::Destroy()
     glDeleteBuffers(1, &VBO);
 }
 
-void Mesh::Draw()
+void Mesh::Draw(Transform& transform, Camera& camera)
 {
     glUseProgram(shader->GetProgram());
     
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID1);
+    glBindTexture(GL_TEXTURE_2D, texID);
     auto loc_texture0 = glGetUniformLocation(shader->GetProgram(), "u_sampler0");
     glUniform1i(loc_texture0, 0);
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texID2);
-    auto loc_texture1 = glGetUniformLocation(shader->GetProgram(), "u_sampler1");
-    glUniform1i(loc_texture1, 1);
-
-    Mat4 rotationMatrix = Mat4::rotation_y((glfwGetTime() * 10.0f));
-    float scale = 0.2f;
-    Mat4 scaleMatrix = Mat4::scaling(scale, scale, scale);
-    Mat4 translationMatrix = Mat4::translation(0, 0, -5);
-    Mat4 modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
     auto loc_modelMatrix = glGetUniformLocation(shader->GetProgram(), "modelMatrix");
-    glUniformMatrix4fv(loc_modelMatrix, 1, GL_FALSE, modelMatrix.data());
+    glUniformMatrix4fv(loc_modelMatrix, 1, GL_FALSE, transform.getTransformMatrix().data());
 
-    // float projectionSize = 2;
-    // Mat4 projectionMatrix = Mat4::getOrthographicMatrix(-projectionSize, projectionSize, projectionSize, -projectionSize, 0, 100);
-    Mat4 projectionMatrix = Mat4::perspective(120, 1, 0, 1000.0f);
+    auto loc_viewMatrix = glGetUniformLocation(shader->GetProgram(), "viewMatrix");
+    glUniformMatrix4fv(loc_viewMatrix, 1, GL_FALSE, camera.viewMatrix.data());
+
     auto loc_projectionMatirx = glGetUniformLocation(shader->GetProgram(), "projectionMatrix");
-    glUniformMatrix4fv(loc_projectionMatirx, 1, GL_FALSE, projectionMatrix.data());
+    glUniformMatrix4fv(loc_projectionMatirx, 1, GL_FALSE, camera.projectionMatrix.data());
 
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glBindVertexArray(VAO);
-    // glDrawArrays(GL_TRIANGLES, 0, sizeof(indices) / sizeof(unsigned int));
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
     // Unbind
@@ -110,7 +100,7 @@ void Mesh::Draw()
     glBindVertexArray(0);
 }
 
-void Mesh::SetTexture(const std::string& filename, int slot)
+void Mesh::SetTexture(const std::string& filename)
 {
     int width, height, comp;
     int desiredComp = 4;
@@ -118,12 +108,8 @@ void Mesh::SetTexture(const std::string& filename, int slot)
 
     if (data)
     {
-        GLuint* texID;
-        if (slot == 0) texID = &texID1;
-        if (slot == 1) texID = &texID2;
-
-        glGenTextures(1, texID);
-        glBindTexture(GL_TEXTURE_2D, *texID);
+        glGenTextures(1, &texID);
+        glBindTexture(GL_TEXTURE_2D, texID);
 
         // Set the texture wrapping parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);   

@@ -1,5 +1,7 @@
 #include "Vec3.hpp"
 #include <cmath>
+#include <stdio.h>
+#include <iostream>
 
 Vec3::Vec3() : Vec3(0, 0, 0) {}
 Vec3::Vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
@@ -11,7 +13,12 @@ float Vec3::length() const
 
 Vec3 Vec3::normalize(const Vec3& vec)
 {
-    return vec / vec.length();
+    float length = vec.length();
+    if (length == 0)
+    {
+        return vec;
+    }
+    return vec / length;
 }
 
 Vec3 Vec3::cross(const Vec3 &a, const Vec3 &b)

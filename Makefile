@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Isrc/common -Isrc/geometry -Isrc/math -Isrc/camera
+CXXFLAGS = -g -O0 -std=c++11 -Wall -Isrc/common -Isrc/geometry -Isrc/math -Isrc/camera
 LDFLAGS = -lGLEW -lGL -lglfw -ldl -lm
 
 # Source directories
@@ -8,14 +8,18 @@ COMMON_DIR = $(SRC_DIR)/common
 GEOMETRY_DIR = $(SRC_DIR)/geometry
 MATH_DIR = $(SRC_DIR)/math
 CAMERA_DIR = $(SRC_DIR)/camera
+WINDOW_DIR = $(SRC_DIR)/window
+INPUT_DIR = $(SRC_DIR)/input
 
 # Source files
 COMMON_SRC = $(wildcard $(COMMON_DIR)/*.cpp)
 GEOMETRY_SRC = $(wildcard $(GEOMETRY_DIR)/*.cpp)
 CAMERA_SRC = $(wildcard $(CAMERA_DIR)/*.cpp)
 MATH_SRC = $(wildcard $(MATH_DIR)/*.cpp)
+WINDOW_SRC = $(wildcard $(WINDOW_DIR)/*.cpp)
+INPUT_SRC = $(wildcard $(INPUT_DIR)/*.cpp)
 MAIN_SRC = $(SRC_DIR)/main.cpp
-SRC = $(COMMON_SRC) $(MATH_SRC) $(GEOMETRY_SRC) $(CAMERA_SRC) $(MAIN_SRC)
+SRC = $(COMMON_SRC) $(MATH_SRC) $(INPUT_SRC) $(WINDOW_SRC) $(GEOMETRY_SRC) $(CAMERA_SRC) $(MAIN_SRC)
 
 # Object files
 OBJ = $(SRC:.cpp=.o)

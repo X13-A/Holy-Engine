@@ -14,7 +14,6 @@ private:
 	Vec3 _position;
 	Vec3 _rotation;
 	Vec3 _scale;
-	Mesh* _mesh;
 
 public:
 	Transform(const Vec3& position, const Vec3& rotation, const Vec3& scale);

@@ -12,33 +12,32 @@
 #include "math/Vec2.hpp"
 #include "geometry/Mesh.hpp"
 #include "math/Mat4.hpp"
-
-// g++ -o main src/main.cpp common/GLShader.cpp ./src/mesh_loader.cpp -lglut -lGL -lGLU -lglfw -lGLEW && ./main
+#include "camera/Camera.hpp"
+#include "geometry/Transform.hpp"
+#include "window/WindowManager.hpp"
+#include "input/InputManager.hpp"
 
 struct Application
 {
 public:
-    GLFWwindow *window;
+    WindowManager* windowManager;
+    InputManager* inputManager;
+
     Mesh mesh;
+    Transform* transform;
+    Camera* cam;
+    
+
+    int width = 640;
+    int height = 640;
 
     void Init()
     {
-        if (!glfwInit())
-        {
-            std::cerr << "Failed to initialize GLFW" << std::endl;
-            exit(EXIT_FAILURE);
-        }
+        inputManager = new InputManager();
+        windowManager = new WindowManager();
 
-        /* Create a windowed mode window and its OpenGL context */
-        window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
-        if (!window)
-        {
-            std::cerr << "Failed to create window" << std::endl;
-            glfwTerminate();
-            exit(EXIT_FAILURE);
-        }
-        /* Make the window's context current */
-        glfwMakeContextCurrent(window);
+        inputManager->init();
+        windowManager->init(inputManager, width, height, "Hello Engine");
 
         // Initialize GLEW
         if (glewInit() != GLEW_OK)
@@ -46,14 +45,24 @@ public:
             std::cerr << "Failed to initialize GLEW" << std::endl;
             exit(EXIT_FAILURE);
         }
-
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         stbi_set_flip_vertically_on_load(true);
 
+
+        cam = new Camera(90, width / height, 0.1f, 100.0f);
+        transform = new Transform(Vec3(), Vec3(), Vec3(1, 1, 1));
+
         mesh.Load("models/Rafale.obj");
         mesh.Init();
+    }
+
+    void Update()
+    {
+        float x = sin(glfwGetTime());
+        cam->transform.setPosition(Vec3(x, 0, 5));
+        cam->computeViewMatrix();
     }
 
     void Render()
@@ -61,10 +70,10 @@ public:
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mesh.Draw();
+        mesh.Draw(*transform, *cam);
 
         /* Swap front and back buffers */
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(windowManager->getWindow());
 
         /* Poll for and process events */
         glfwPollEvents();
@@ -83,8 +92,9 @@ int main(void)
     Application app;
     app.Init();
 
-    while (!glfwWindowShouldClose(app.window))
+    while (!glfwWindowShouldClose(app.windowManager->getWindow()))
     {
+        app.Update();
         app.Render();
     }
 

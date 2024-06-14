@@ -17,22 +17,32 @@ const float& Mat4::operator()(int row, int col) const
     return array[col * 4 + row];
 }
 
-Mat4 Mat4::operator*(const Mat4& other) const
+Mat4 Mat4::operator*(const Mat4& other) const 
 {
     Mat4 result;
-    for (int i = 0; i < 4; ++i)
+    for (int row = 0; row < 4; ++row) 
     {
-        for (int j = 0; j < 4; ++j)
+        for (int col = 0; col < 4; ++col) 
         {
-            result(i, j) = 0;
-            for (int k = 0; k < 4; ++k)
+            result(row, col) = 0.0f;
+            for (int k = 0; k < 4; ++k) 
             {
-                result(i, j) += (*this)(i, k) * other(k, j);
+                result(row, col) += (*this)(row, k) * other(k, col);
             }
         }
     }
     return result;
 }
+
+Vec3 Mat4::operator*(const Vec3& vec) const 
+{
+    Vec3 result;
+    result.x = (*this)(0, 0) * vec.x + (*this)(0, 1) * vec.y + (*this)(0, 2) * vec.z + (*this)(0, 3);
+    result.y = (*this)(1, 0) * vec.x + (*this)(1, 1) * vec.y + (*this)(1, 2) * vec.z + (*this)(1, 3);
+    result.z = (*this)(2, 0) * vec.x + (*this)(2, 1) * vec.y + (*this)(2, 2) * vec.z + (*this)(2, 3);
+    return result;
+}
+
 
 const float* Mat4::data() const
 {

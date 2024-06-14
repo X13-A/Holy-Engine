@@ -4,7 +4,6 @@
 
 Transform::Transform(const Vec3& position, const Vec3& rotation, const Vec3& scale) : _transformMatrix(Mat4()), _position(position), _rotation(rotation), _scale(scale)
 {
-	_mesh = NULL;
 	setPosition(position);
 	setRotation(rotation);
 	setScale(scale);

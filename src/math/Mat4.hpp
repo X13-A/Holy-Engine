@@ -22,6 +22,7 @@ public:
 
     // Matrix multiplication
     Mat4 operator*(const Mat4& other) const;
+    Vec3 operator*(const Vec3& other) const;
 
     // Get the raw data
     const float* data() const;
