@@ -60,9 +60,10 @@ public:
 
     void Update()
     {
-        float x = sin(glfwGetTime());
-        cam->transform.setPosition(Vec3(x, 0, 5));
-        cam->computeViewMatrix();
+        float x = sin(glfwGetTime()) * 10.0f;
+        transform->setPosition(Vec3(x, 0, -5));
+        cam->transform.setPosition(Vec3(-x, 0, 0));
+        cam->transform.lookat(transform->getPosition());
     }
 
     void Render()

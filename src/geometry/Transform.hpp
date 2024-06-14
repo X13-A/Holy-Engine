@@ -30,6 +30,7 @@ public:
 	void translate(const Vec3& offset);
 	void rotate(const Vec3& degrees);
 	void scale(const Vec3& value);
+	void lookat(const Vec3& target);
 };
 
 

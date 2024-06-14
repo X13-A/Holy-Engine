@@ -86,10 +86,10 @@ void Mesh::Draw(Transform& transform, Camera& camera)
     glUniformMatrix4fv(loc_modelMatrix, 1, GL_FALSE, transform.getTransformMatrix().data());
 
     auto loc_viewMatrix = glGetUniformLocation(shader->GetProgram(), "viewMatrix");
-    glUniformMatrix4fv(loc_viewMatrix, 1, GL_FALSE, camera.viewMatrix.data());
+    glUniformMatrix4fv(loc_viewMatrix, 1, GL_FALSE, camera.getViewMatrix().data());
 
     auto loc_projectionMatirx = glGetUniformLocation(shader->GetProgram(), "projectionMatrix");
-    glUniformMatrix4fv(loc_projectionMatirx, 1, GL_FALSE, camera.projectionMatrix.data());
+    glUniformMatrix4fv(loc_projectionMatirx, 1, GL_FALSE, camera.getProjectionMatrix().data());
 
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glBindVertexArray(VAO);

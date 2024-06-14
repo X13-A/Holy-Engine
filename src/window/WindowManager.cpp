@@ -63,9 +63,10 @@ void WindowManager::init(InputManager* inputManager, unsigned int width, unsigne
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     glfwMakeContextCurrent(window);
-    glfwSetWindowUserPointer(window, inputManager); // Set the user pointer to this instance of WindowManager
+
+    // Set the user pointer to the inputManager, used to to trigger callbacks on inputManager
+    glfwSetWindowUserPointer(window, inputManager);
 
     glViewport(0, 0, width, height);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

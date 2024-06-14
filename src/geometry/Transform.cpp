@@ -84,4 +84,24 @@ void Transform::scale(const Vec3& value)
 	_transformMatrix.scale(value);
 }
 
+void Transform::lookat(const Vec3& target)
+{
+    _transformMatrix = Mat4::lookAt(_position, target, Vec3(0.0f, 1.0f, 0.0f));
+
+	// update rot
+	Vec3 newRotation;
+    newRotation.y = std::asin(-_transformMatrix(2, 0));
+    if (std::cos(newRotation.y) != 0)
+	{
+        newRotation.x = std::atan2(_transformMatrix(2, 1), _transformMatrix(2, 2));
+        newRotation.z = std::atan2(_transformMatrix(1, 0), _transformMatrix(0, 0));
+    }
+	else
+	{
+        newRotation.x = std::atan2(-_transformMatrix(1, 2), _transformMatrix(1, 1));
+        newRotation.z = 0;
+    }
+    _rotation = newRotation;
+}
+
 #pragma endregion

@@ -13,10 +13,10 @@ private:
     float near;
     float far;
     float fov;
+    Mat4 projectionMatrix;
 
 public:
-    Mat4 projectionMatrix;
-    Mat4 viewMatrix;
+
     Transform transform;
 
     Camera(float fov = 45.0f, float ratio = 8.0f/6.0f, float near = 0.1f, float far = 100.0f, Vec3 position = Vec3(0.0f, 0.0f, 0.0f));
@@ -27,9 +27,10 @@ public:
     void setFov(float fov);
     void setRatio(float ratio);
     void computeProjectionMatrix();
-    void computeViewMatrix();
-    float getNear() const;
-    float getFar() const;
+    const Mat4& getProjectionMatrix() const;
+    const Mat4& getViewMatrix() const;
+    const float& getNear() const;
+    const float& getFar() const;
     void printValues();
 };
 
