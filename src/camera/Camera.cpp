@@ -1,5 +1,7 @@
 #include "Camera.hpp"
 #include <iostream>
+#include <../utils/Time.hpp>
+#include <../math/Math.hpp>
 
 // Constructor
 Camera::Camera(float fov, float ratio, float near, float far, Vec3 position) : fov(fov), ratio(ratio), near(near), far(far), transform(position, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f))
@@ -53,9 +55,9 @@ const Mat4& Camera::getProjectionMatrix() const
 }
 
 // Get view matrix
-const Mat4& Camera::getViewMatrix() const
+Mat4 Camera::getViewMatrix() const
 {
-    return transform.getTransformMatrix();
+    return Mat4::inverse(transform.getTransformMatrix());
 }
 
 // Get near plane

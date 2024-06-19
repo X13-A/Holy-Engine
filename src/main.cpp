@@ -25,19 +25,16 @@ public:
     InputManager* inputManager;
     CreativeControls* cameraControls;
 
-    Mesh mesh;
-    Transform* transform;
+    std::vector<Mesh> meshes;
+    std::vector<Transform*> transforms;
     Camera* cam;
-    
 
     int width = 640;
     int height = 640;
 
     void Init()
     {
-        cam = new Camera(90, width / height, 0.1f, 100.0f);
-        transform = new Transform(Vec3(), Vec3(), Vec3(1, 1, 1));
-
+        cam = new Camera(60, width / height, 0.001f, 100.0f, Vec3(0, 0, 0));
         inputManager = new InputManager();
         windowManager = new WindowManager();
         cameraControls = new CreativeControls(cam, 10.0f, 0.2f);
@@ -52,25 +49,45 @@ public:
             std::cerr << "Failed to initialize GLEW" << std::endl;
             exit(EXIT_FAILURE);
         }
-        glCullFace(GL_BACK);
+        glCullFace(GL_FRONT);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         stbi_set_flip_vertically_on_load(true);
 
-        mesh.Load("models/Rafale.obj");
-        mesh.Init();
+        // Init meshes
+        Mesh mesh1;
+        mesh1.Load("models/Rafale.obj");
+        mesh1.Init();
+        meshes.push_back(mesh1);
+        Transform* transform1 = new Transform(Vec3(0, 0, -15), Vec3(), Vec3(1, 1, 1));
+        transforms.push_back(transform1);
+
+        // Mesh mesh2;
+        // mesh2.Load("models/Box.obj");
+        // mesh2.Init();
+        // meshes.push_back(mesh2);
+        // Transform* transform2 = new Transform(Vec3(0, 0, 0), Vec3(), Vec3(10, 0.1, 10));
+        // transforms.push_back(transform2);
+
+        // Mat4 transformMatrix;
+        cam->transform.setPosition(Vec3(0, 0, 0));
+
     }
 
     void Update()
     {
         Time::update();
-        float rot = Time::time() * 1;
-        transform->setPosition(Vec3(sin(rot) * 0, 0, -10));
-        // cam->transform.setPosition(Vec3(cos(rot) * 5, sin(rot) * 10, 0));
-
         inputManager->update(windowManager->getWindow());
         cameraControls->update(inputManager);
-        // cam->transform.lookat(transform->getPosition());
+
+        Vec3 pos = cam->transform.getPosition();
+        Vec3 matrixPos = cam->transform.getTransformMatrixPosition();
+        float delta = Vec3::distance(pos, matrixPos);
+        if (delta > 0)
+        {
+            std::cout << "ERROR: Wrong calculation of transformation matrix (delta: " << delta << ")" << std::endl;
+        }
+        pos.printValues();
     }
 
     void Render()
@@ -78,7 +95,10 @@ public:
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mesh.Draw(*transform, *cam);
+        for (int i = 0; i < meshes.size(); i++)
+        {
+            meshes[i].Draw(*transforms[i], *cam);
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(windowManager->getWindow());
@@ -90,7 +110,11 @@ public:
     void Terminate()
     {
         // Deallocate resources
-        mesh.Destroy();
+        for (int i = 0; i < meshes.size(); i++)
+        {
+            meshes[i].Destroy();
+            free(transforms[i]);
+        }
         glfwTerminate();
     }
 };

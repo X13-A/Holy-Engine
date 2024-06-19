@@ -20,7 +20,8 @@ public:
 
 	const Mat4& getTransformMatrix() const;
 	const Vec3& getPosition() const;
-	const Vec3& getRotation() const;
+	Vec3 getTransformMatrixPosition() const;
+	const Vec3 &getRotation() const;
 	const Vec3& getScale() const;
 	const float& getYaw() const;
 	const float& getPitch() const;
@@ -29,12 +30,14 @@ public:
 	void setScale(const Vec3& value);
 	void setPosition(const Vec3& newPosition);
 	void setRotation(const Vec3& newRotation);
+	void setPitchYaw(float pitch, float yaw);
 
-	void translate(const Vec3& offset);
+	void lookat(const Vec3 &target, const Vec3 &up);
+	void translate(const Vec3 &offset);
 	void translateLocal(const Vec3& offset);
 	void rotate(const Vec3& degrees);
 	void scale(const Vec3& value);
-	void lookat(const Vec3& target);
+	void printValues();
 };
 
 

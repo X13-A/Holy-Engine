@@ -35,17 +35,18 @@ public:
     static Mat4 translation(float tx, float ty, float tz);
     static Mat4 orthographic(float left, float right, float top, float bottom, float near, float far);
     static Mat4 perspective(float angle, float ratio, float near, float far);
-    static Mat4 lookAt(const Vec3& eye, const Vec3& center, const Vec3& up);
-    
+    static Mat4 inverse(const Mat4& mat);
+    static Mat4 lookAt(const Vec3 &eye, const Vec3 &center, const Vec3 &up);
+
     void scale(float sx, float sy, float sz);
     void rotate_x(float angle);
     void rotate_y(float angle);
     void rotate_z(float angle);
-    void rotate(float x, float y, float z);
+    void rotate(float x, float y, float z, const Vec3& point = Vec3(0, 0, 0));
     void translate(float tx, float ty, float tz);
 
     void scale(const Vec3& scale);
-    void rotate(const Vec3& rot);
+    void rotate(const Vec3& rot, const Vec3& point = Vec3(0, 0, 0));
     void translate(const Vec3& offset);
 
 #pragma endregion

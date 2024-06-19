@@ -22,6 +22,16 @@ const Vec3& Transform::getPosition() const
 	return _position;
 }
 
+// Used for debug, because it does not match position
+Vec3 Transform::getTransformMatrixPosition() const
+{
+	Vec3 pos;
+	pos.x = getTransformMatrix()(0, 3);
+	pos.y = getTransformMatrix()(1, 3);
+	pos.z = getTransformMatrix()(2, 3);
+	return pos;
+}
+
 const Vec3& Transform::getRotation() const
 {
 	return _rotation;
@@ -65,17 +75,44 @@ void Transform::setPosition(const Vec3& newPosition)
 	translate(delta);
 }
 
+void Transform::setPitchYaw(float pitch, float yaw)
+{
+	// TODO
+    std::cerr << "setPitchYaw not implemented" << std::endl;
+    exit(1);
+}
+
+void Transform::lookat(const Vec3& target, const Vec3& up)
+{
+    // TODO
+    std::cerr << "lookAt not implemented" << std::endl;
+    exit(1);
+}
+
 void Transform::setRotation(const Vec3& newRotation)
 {
-	_transformMatrix = Mat4();
-	_transformMatrix.scale(_scale);
-	_transformMatrix.translate(_position);
+    // Reset the transform matrix to identity
+    _transformMatrix = Mat4();
 
-	Vec3 rotationRadians = radians(newRotation);
-	_transformMatrix.rotate(rotationRadians);
+    // Apply scale
+    _transformMatrix.scale(_scale);
 
-	_rotation = newRotation;
+    // Create rotation matrices for each axis
+    Mat4 rotationX = Mat4::rotation_x(newRotation.x);
+    Mat4 rotationY = Mat4::rotation_y(newRotation.y);
+    Mat4 rotationZ = Mat4::rotation_z(newRotation.z);
+
+    // Combine the rotations: rotationZ * rotationY * rotationX
+    Mat4 rotationMatrix = rotationZ * rotationY * rotationX;
+    _transformMatrix = _transformMatrix * rotationMatrix;
+
+    // Apply translation
+    _transformMatrix.translate(_position);
+
+    // Update the rotation
+    _rotation = newRotation;
 }
+
 
 #pragma endregion
 
@@ -89,22 +126,25 @@ void Transform::translate(const Vec3& offset)
 
 void Transform::translateLocal(const Vec3& offset)
 {
-	// Vec3 localOffset;
-	// localOffset.x = right * offset.x;
-	// localOffset.y = up * offset.y;
-	// localOffset.z = forward * offset.z;
+    // Extract the local coordinate axes from the rotation matrix
+    Vec3 right(_transformMatrix(0, 0), _transformMatrix(1, 0), _transformMatrix(2, 0));
+    Vec3 up(_transformMatrix(0, 1), _transformMatrix(1, 1), _transformMatrix(2, 1));
+    Vec3 forward(_transformMatrix(0, 2), _transformMatrix(1, 2), _transformMatrix(2, 2));
 
-	// _position += localOffset;
-	// _transformMatrix.translate(localOffset);
+    // Compute the local offset
+    Vec3 localOffset = right * offset.x + up * offset.y + forward * offset.z;
+
+    // Update the position and the transformation matrix
+    _position += localOffset;
+	std::cout << localOffset.length() << std::endl;
+	_transformMatrix.translate(localOffset);
 }
 
 void Transform::rotate(const Vec3& degrees)
 {
 	Vec3 rads = radians(degrees);
 	_rotation += rads;
-	std::cout << degrees.y << ": " << rads.y << ": " << _rotation.y << std::endl;
-
-	_transformMatrix.rotate(rads);
+	_transformMatrix.rotate(rads, getPosition());
 }
 
 void Transform::scale(const Vec3& value)
@@ -113,30 +153,11 @@ void Transform::scale(const Vec3& value)
 	_transformMatrix.scale(value);
 }
 
-void Transform::lookat(const Vec3& target)
+// Print camera values
+void Transform::printValues()
 {
-    _transformMatrix = Mat4::lookAt(_position, target, Vec3(0.0f, 1.0f, 0.0f));
-
-	// Prevent lookat from affecting position
-	_transformMatrix(0, 3) = _position.x;
-	_transformMatrix(1, 3) = _position.y;
-	_transformMatrix(2, 3) = _position.z;
-	_transformMatrix(3, 3) = 1.0;
-
-	// update rot
-	Vec3 newRotation;
-    newRotation.y = std::asin(-_transformMatrix(2, 0));
-    if (std::cos(newRotation.y) != 0)
-	{
-        newRotation.x = std::atan2(_transformMatrix(2, 1), _transformMatrix(2, 2));
-        newRotation.z = std::atan2(_transformMatrix(1, 0), _transformMatrix(0, 0));
-    }
-	else
-	{
-        newRotation.x = std::atan2(-_transformMatrix(1, 2), _transformMatrix(1, 1));
-        newRotation.z = 0;
-    }
-    _rotation = newRotation;
+    std::cout << "Pos: " << getPosition().x << ", " << getPosition().y << ", " << getPosition().z << std::endl;
+    std::cout << "Forward: " << getRotation().x << ", " << getRotation().y << ", " << getRotation().z << std::endl;
 }
 
 #pragma endregion

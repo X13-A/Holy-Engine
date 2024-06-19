@@ -28,7 +28,7 @@ public:
     void setRatio(float ratio);
     void computeProjectionMatrix();
     const Mat4& getProjectionMatrix() const;
-    const Mat4& getViewMatrix() const;
+    Mat4 getViewMatrix() const;
     const float& getNear() const;
     const float& getFar() const;
     void printValues();

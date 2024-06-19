@@ -1,4 +1,6 @@
 #include "Mat4.hpp"
+#include "../math/Math.hpp"
+#include <iostream>
 
 Mat4::Mat4()
 {
@@ -53,8 +55,8 @@ const float* Mat4::data() const
 Mat4 Mat4::rotation_x(float angle)
 {
     Mat4 res;
-    float cosAngle = cos(angle * M_PI / 180.0f);
-    float sinAngle = sin(angle * M_PI / 180.0f);
+    float cosAngle = cos(radians(angle));
+    float sinAngle = sin(radians(angle));
 
     res(1, 1) = cosAngle;
     res(2, 1) = sinAngle;
@@ -130,46 +132,178 @@ Mat4 Mat4::orthographic(float left, float right, float top, float bottom, float 
 Mat4 Mat4::perspective(float fovy, float ratio, float near, float far)
 {
     Mat4 res;
-    float cot = 1/(tan(fovy / 2));
+    float tanHalfFovy = tan(radians(fovy) / 2);
 
-    res(0, 0) = cot / ratio;
-    res(1, 1) = cot;
-    res(2, 2) = -(far / (far - near));
+    float top = near * tanHalfFovy;
+    float bottom = -top;
+    float right = top * ratio;
+    float left = -right;
+
+    res(0, 0) = (2 * near) / (right - left);
+    res(1, 0) = 0;
+    res(2, 0) = 0;
+    res(3, 0) = 0;
+
+    res(0, 1) = 0;
+    res(1, 1) = (2 * near) / (top - bottom);
+    res(2, 1) = 0;
+    res(3, 1) = 0;
+
+    res(0, 2) = (right + left) / (right - left);
+    res(1, 2) = (top + bottom) / (top - bottom);
+    res(2, 2) = -(far + near) / (far - near);
     res(3, 2) = -1;
-    res(2, 3) = -((near * far) / (far - near));
+
+    res(0, 3) = 0;
+    res(1, 3) = 0;
+    res(2, 3) = -(2 * far * near) / (far - near);
+    res(3, 3) = 0;
 
     return res;
 }
 
 Mat4 Mat4::lookAt(const Vec3& eye, const Vec3& center, const Vec3& up)
 {
-    Vec3 f = Vec3::normalize(center - eye);
-    Vec3 u = Vec3::normalize(up);
-    Vec3 s = Vec3::normalize(Vec3::cross(f, u));
-    u = Vec3::cross(s, f);
+    // TODO
+    std::cerr << "lookAt not implemented" << std::endl;
+    exit(1);
+    return Mat4();
+}
 
-    Mat4 lookAt;
-    lookAt(0, 0) = s.x;
-    lookAt(0, 1) = s.y;
-    lookAt(0, 2) = s.z;
-    lookAt(0, 3) = -Vec3::dot(s, eye);
+Mat4 Mat4::inverse(const Mat4& m)
+{
+    Mat4 inv;
+    float det;
+    int i;
 
-    lookAt(1, 0) = u.x;
-    lookAt(1, 1) = u.y;
-    lookAt(1, 2) = u.z;
-    lookAt(1, 3) = -Vec3::dot(u, eye);
+    inv(0, 0) = m(1, 1) * m(2, 2) * m(3, 3) - 
+                m(1, 1) * m(2, 3) * m(3, 2) - 
+                m(2, 1) * m(1, 2) * m(3, 3) + 
+                m(2, 1) * m(1, 3) * m(3, 2) +
+                m(3, 1) * m(1, 2) * m(2, 3) - 
+                m(3, 1) * m(1, 3) * m(2, 2);
 
-    lookAt(2, 0) = -f.x;
-    lookAt(2, 1) = -f.y;
-    lookAt(2, 2) = -f.z;
-    lookAt(2, 3) = Vec3::dot(f, eye);
+    inv(1, 0) = -m(1, 0) * m(2, 2) * m(3, 3) + 
+                 m(1, 0) * m(2, 3) * m(3, 2) + 
+                 m(2, 0) * m(1, 2) * m(3, 3) - 
+                 m(2, 0) * m(1, 3) * m(3, 2) - 
+                 m(3, 0) * m(1, 2) * m(2, 3) + 
+                 m(3, 0) * m(1, 3) * m(2, 2);
 
-    lookAt(3, 0) = 0.0f;
-    lookAt(3, 1) = 0.0f;
-    lookAt(3, 2) = 0.0f;
-    lookAt(3, 3) = 1.0f;
+    inv(2, 0) = m(1, 0) * m(2, 1) * m(3, 3) - 
+                m(1, 0) * m(2, 3) * m(3, 1) - 
+                m(2, 0) * m(1, 1) * m(3, 3) + 
+                m(2, 0) * m(1, 3) * m(3, 1) + 
+                m(3, 0) * m(1, 1) * m(2, 3) - 
+                m(3, 0) * m(1, 3) * m(2, 1);
 
-    return lookAt;
+    inv(3, 0) = -m(1, 0) * m(2, 1) * m(3, 2) + 
+                 m(1, 0) * m(2, 2) * m(3, 1) + 
+                 m(2, 0) * m(1, 1) * m(3, 2) - 
+                 m(2, 0) * m(1, 2) * m(3, 1) - 
+                 m(3, 0) * m(1, 1) * m(2, 2) + 
+                 m(3, 0) * m(1, 2) * m(2, 1);
+
+    inv(0, 1) = -m(0, 1) * m(2, 2) * m(3, 3) + 
+                 m(0, 1) * m(2, 3) * m(3, 2) + 
+                 m(2, 1) * m(0, 2) * m(3, 3) - 
+                 m(2, 1) * m(0, 3) * m(3, 2) - 
+                 m(3, 1) * m(0, 2) * m(2, 3) + 
+                 m(3, 1) * m(0, 3) * m(2, 2);
+
+    inv(1, 1) = m(0, 0) * m(2, 2) * m(3, 3) - 
+                m(0, 0) * m(2, 3) * m(3, 2) - 
+                m(2, 0) * m(0, 2) * m(3, 3) + 
+                m(2, 0) * m(0, 3) * m(3, 2) + 
+                m(3, 0) * m(0, 2) * m(2, 3) - 
+                m(3, 0) * m(0, 3) * m(2, 2);
+
+    inv(2, 1) = -m(0, 0) * m(2, 1) * m(3, 3) + 
+                 m(0, 0) * m(2, 3) * m(3, 1) + 
+                 m(2, 0) * m(0, 1) * m(3, 3) - 
+                 m(2, 0) * m(0, 3) * m(3, 1) - 
+                 m(3, 0) * m(0, 1) * m(2, 3) + 
+                 m(3, 0) * m(0, 3) * m(2, 1);
+
+    inv(3, 1) = m(0, 0) * m(2, 1) * m(3, 2) - 
+                m(0, 0) * m(2, 2) * m(3, 1) - 
+                m(2, 0) * m(0, 1) * m(3, 2) + 
+                m(2, 0) * m(0, 2) * m(3, 1) + 
+                m(3, 0) * m(0, 1) * m(2, 2) - 
+                m(3, 0) * m(0, 2) * m(2, 1);
+
+    inv(0, 2) = m(0, 1) * m(1, 2) * m(3, 3) - 
+                m(0, 1) * m(1, 3) * m(3, 2) - 
+                m(1, 1) * m(0, 2) * m(3, 3) + 
+                m(1, 1) * m(0, 3) * m(3, 2) + 
+                m(3, 1) * m(0, 2) * m(1, 3) - 
+                m(3, 1) * m(0, 3) * m(1, 2);
+
+    inv(1, 2) = -m(0, 0) * m(1, 2) * m(3, 3) + 
+                 m(0, 0) * m(1, 3) * m(3, 2) + 
+                 m(1, 0) * m(0, 2) * m(3, 3) - 
+                 m(1, 0) * m(0, 3) * m(3, 2) - 
+                 m(3, 0) * m(0, 2) * m(1, 3) + 
+                 m(3, 0) * m(0, 3) * m(1, 2);
+
+    inv(2, 2) = m(0, 0) * m(1, 1) * m(3, 3) - 
+                m(0, 0) * m(1, 3) * m(3, 1) - 
+                m(1, 0) * m(0, 1) * m(3, 3) + 
+                m(1, 0) * m(0, 3) * m(3, 1) + 
+                m(3, 0) * m(0, 1) * m(1, 3) - 
+                m(3, 0) * m(0, 3) * m(1, 1);
+
+    inv(3, 2) = -m(0, 0) * m(1, 1) * m(3, 2) + 
+                 m(0, 0) * m(1, 2) * m(3, 1) + 
+                 m(1, 0) * m(0, 1) * m(3, 2) - 
+                 m(1, 0) * m(0, 2) * m(3, 1) - 
+                 m(3, 0) * m(0, 1) * m(1, 2) + 
+                 m(3, 0) * m(0, 2) * m(1, 1);
+
+    inv(0, 3) = -m(0, 1) * m(1, 2) * m(2, 3) + 
+                 m(0, 1) * m(1, 3) * m(2, 2) + 
+                 m(1, 1) * m(0, 2) * m(2, 3) - 
+                 m(1, 1) * m(0, 3) * m(2, 2) - 
+                 m(2, 1) * m(0, 2) * m(1, 3) + 
+                 m(2, 1) * m(0, 3) * m(1, 2);
+
+    inv(1, 3) = m(0, 0) * m(1, 2) * m(2, 3) - 
+                m(0, 0) * m(1, 3) * m(2, 2) - 
+                m(1, 0) * m(0, 2) * m(2, 3) + 
+                m(1, 0) * m(0, 3) * m(2, 2) + 
+                m(2, 0) * m(0, 2) * m(1, 3) - 
+                m(2, 0) * m(0, 3) * m(1, 2);
+
+    inv(2, 3) = -m(0, 0) * m(1, 1) * m(2, 3) + 
+                 m(0, 0) * m(1, 3) * m(2, 1) + 
+                 m(1, 0) * m(0, 1) * m(2, 3) - 
+                 m(1, 0) * m(0, 3) * m(2, 1) - 
+                 m(2, 0) * m(0, 1) * m(1, 3) + 
+                 m(2, 0) * m(0, 3) * m(1, 1);
+
+    inv(3, 3) = m(0, 0) * m(1, 1) * m(2, 2) - 
+                m(0, 0) * m(1, 2) * m(2, 1) - 
+                m(1, 0) * m(0, 1) * m(2, 2) + 
+                m(1, 0) * m(0, 2) * m(2, 1) + 
+                m(2, 0) * m(0, 1) * m(1, 2) - 
+                m(2, 0) * m(0, 2) * m(1, 1);
+
+    det = m(0, 0) * inv(0, 0) + m(0, 1) * inv(1, 0) + m(0, 2) * inv(2, 0) + m(0, 3) * inv(3, 0);
+
+    if (det == 0)
+        throw std::runtime_error("Matrix is not invertible");
+
+    det = 1.0 / det;
+
+    for (i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            inv(i, j) = inv(i, j) * det;
+        }
+    }
+
+    return inv;
 }
 
 void Mat4::scale(float sx, float sy, float sz)
@@ -202,26 +336,33 @@ void Mat4::translate(float tx, float ty, float tz)
     *this = *this * translationMatrix;
 }
 
-void Mat4::rotate(float x, float y, float z)
+void Mat4::rotate(float x, float y, float z, const Vec3& point)
 {
+    // Translate to the point
+    Mat4 translationToPoint = Mat4::translation(-point.x, -point.y, -point.z);
+    *this = *this * translationToPoint;
+
+    // Apply the rotations (Tait-Bryan angles)
     Mat4 rotationMatrix_x = Mat4::rotation_x(x);
     Mat4 rotationMatrix_y = Mat4::rotation_y(y);
     Mat4 rotationMatrix_z = Mat4::rotation_z(z);
 
-    // Apply the rotations (Tait-Bryan angles)
     *this = *this * rotationMatrix_z;
     *this = *this * rotationMatrix_y;
     *this = *this * rotationMatrix_x;
-}
 
+    // Translate back from the point
+    Mat4 translationBack = Mat4::translation(point.x, point.y, point.z);
+    *this = *this * translationBack;
+}
 
 void Mat4::scale(const Vec3& scale)
 {
     this->scale(scale.x, scale.y, scale.z);
 }
-void Mat4::rotate(const Vec3& rot)
+void Mat4::rotate(const Vec3& rot, const Vec3& point)
 {
-    this->rotate(rot.x, rot.y, rot.z);
+    this->rotate(rot.x, rot.y, rot.z, point);
 }
 void Mat4::translate(const Vec3& offset)
 {

@@ -87,7 +87,7 @@ void Mesh::Draw(Transform& transform, Camera& camera)
 
     auto loc_viewMatrix = glGetUniformLocation(shader->GetProgram(), "viewMatrix");
     glUniformMatrix4fv(loc_viewMatrix, 1, GL_FALSE, camera.getViewMatrix().data());
-
+    
     auto loc_projectionMatirx = glGetUniformLocation(shader->GetProgram(), "projectionMatrix");
     glUniformMatrix4fv(loc_projectionMatirx, 1, GL_FALSE, camera.getProjectionMatrix().data());
 

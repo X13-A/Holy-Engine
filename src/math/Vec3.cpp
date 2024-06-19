@@ -129,3 +129,16 @@ Vec3& Vec3::operator/=(const Vec3& other)
     }
     throw std::invalid_argument("Division by zero");
 }
+
+float Vec3::distance(const Vec3& a, const Vec3& b)
+{
+    float dx = a.x - b.x;
+    float dy = a.y - b.y;
+    float dz = a.z - b.z;
+    return std::sqrt(dx * dx + dy * dy + dz * dz);
+}
+
+void Vec3::printValues() const
+{
+    std::cout << "x: " << x << ", y: " << y << ", z: " << z << std::endl;
+}
