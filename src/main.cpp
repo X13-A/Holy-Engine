@@ -6,7 +6,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "common/stb_image.h"
 #include "common/GLShader.h"
-#include "geometry/mesh_loader.hpp"
 #include "geometry/Vertex.hpp"
 #include "math/Vec3.hpp"
 #include "math/Vec2.hpp"
@@ -18,27 +17,27 @@
 #include "window/WindowManager.hpp"
 #include "input/InputManager.hpp"
 #include "controls/CreativeControls.hpp"
-
+#include "geometry/ModelLoader.hpp"
 #include "model/Model.hpp"
 #include "materials/Material.hpp"
 #include "materials/LitMaterial.hpp"
 #include "light/SceneLightInfo.hpp"
 
-Model* CreateModel(const char* meshPath, Material* material)
-{
-    Transform* transform = new Transform(Vec3(0, 0, 0), Vec3(), Vec3(1, 1, 1));
+// Model* CreateModel(const char* meshPath, Material* material)
+// {
+//     Transform* transform = new Transform(Vec3(0, 0, 0), Vec3(), Vec3(1, 1, 1));
     
-    Mesh* mesh = new Mesh();
-    mesh->Load(meshPath);
-    mesh->Init();
+//     Mesh* mesh = new Mesh();
+//     mesh->Load(meshPath);
+//     mesh->Init();
 
-    Model *model = new Model();
-    model->transform = transform;
-    model->mesh = mesh;
-    model->material = material;
-    model->Init();
-    return model;
-}
+//     Model *model = new Model();
+//     model->transform = transform;
+//     model->mesh = mesh;
+//     model->material = material;
+//     model->Init();
+//     return model;
+// }
 
 struct Application
 {
@@ -73,38 +72,36 @@ public:
             std::cerr << "Failed to initialize GLEW" << std::endl;
             exit(EXIT_FAILURE);
         }
+        
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         stbi_set_flip_vertically_on_load(true);
 
-        LitMaterial *rafaleMaterial = new LitMaterial();
-        rafaleMaterial->Init("./shaders/vert.glsl", "./shaders/frag.glsl");
-        rafaleMaterial->Attach(cam, &lightInfo);
-        rafaleMaterial->metallic = 0.0f;
-        rafaleMaterial->smoothness = 0.9f;
-        Model *rafale = CreateModel("./models/Rafale.obj", rafaleMaterial);
+        Model* atrium = new Model();
+        ModelLoader loader;
+        loader.load("models/Atrium/atrium.obj", "models/Atrium", atrium->shapes, cam, &lightInfo);
+        atrium->transform = new Transform(Vec3(0, 0.0, 0), Vec3(0, 0, 0), Vec3(1, 1, 1));
+        atrium->Init();
+        models.push_back(atrium);
+
+        Model* rafale = new Model();
+        loader.load("models/Rafale/Rafale.obj", "models/Rafale", rafale->shapes, cam, &lightInfo);
+        rafale->transform = new Transform(Vec3(0, 3.0, 0), Vec3(0, 90, 0), Vec3(0.05, 0.05, 0.05));
+        rafale->Init();
         models.push_back(rafale);
 
-        LitMaterial *catMaterial = new LitMaterial();
-        catMaterial->Init("./shaders/vert.glsl", "./shaders/frag.glsl");
-        catMaterial->Attach(cam, &lightInfo);
-        catMaterial->metallic = 1.0f;
-        catMaterial->smoothness = 0.9f;
-        Model *cat = CreateModel("./models/Cat.obj", catMaterial);
-        models.push_back(cat);
-        cat->transform->setPosition(Vec3(10, 0, 0));
-        cat->transform->setScale(Vec3(0.2, 0.2, 0.2));
         // Init grid
         grid.GenerateGrid(20.0, 1.0);
         grid.Init();
 
         // Lighting
-        lightInfo.lightColor = Vec3(5, 5, 5);
+        lightInfo.lightColor = Vec3(1.0, 0.96, 0.71) * 3;
         lightInfo.lightPos = Vec3(0, 10, 0);
         lightInfo.ambientLight = Vec3(1, 1, 1) * 0.05;
 
-        cam->transform.setPosition(Vec3(0, 0, 10));
+        cam->transform.setPosition(Vec3(0, 20, 0));
+        cam->transform.setRotation(Vec3(-90, 0, 0));
     }
 
     void Update()
@@ -115,10 +112,10 @@ public:
 
         // Move light
         float time = Time::time();
-        float radius = 10.0f;
+        float radius = 20.0f;
         float lightX = radius * cos(time);
         float lightZ = radius * sin(time);
-        float lightY = 5.0f;
+        float lightY = 20.0f;
         lightInfo.lightPos = Vec3(lightX, lightY, lightZ);
 
         if (inputManager->isKeyPressed(KeyboardKey::Escape))
@@ -140,8 +137,7 @@ public:
     void Render()
     {
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        windowManager->clear(Vec4(1.0, 0.99, 0.90, 1.0));
         grid.Draw(*cam);
         for (std::size_t i = 0; i < models.size(); i++)
         {

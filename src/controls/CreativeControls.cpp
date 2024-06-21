@@ -20,7 +20,7 @@ void CreativeControls::handleMouseMove(float xoffset, float yoffset)
     // std::cout << "FPS: " << 1.0f / Time::deltaTime() << std::endl;
     // std::cout << "yaw: " << yaw << ", pitch: " << pitch << std::endl;
 
-    // Vec3 direction;
+    Vec3 direction;
     // direction.x = -cos(radians(yaw)) * cos(radians(pitch));
     // direction.y = sin(radians(pitch));
     // direction.z = sin(radians(yaw)) * cos(radians(pitch));

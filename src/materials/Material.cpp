@@ -29,10 +29,12 @@ void Material::Init(std::string vert_path, std::string frag_path)
     {
         std::cerr << "Failed to create shader program" << std::endl;
         exit(EXIT_FAILURE);
-    }    
+    }
+
+    SetAlbedoTexture(albedoPath);
 }
 
-void Material::SetTexture(const std::string& filename)
+void Material::SetAlbedoTexture(const std::string& filename)
 {
     int width, height, comp;
     int desiredComp = 4;
@@ -40,8 +42,8 @@ void Material::SetTexture(const std::string& filename)
 
     if (data)
     {
-        glGenTextures(1, &texID);
-        glBindTexture(GL_TEXTURE_2D, texID);
+        glGenTextures(1, &albedoTexID);
+        glBindTexture(GL_TEXTURE_2D, albedoTexID);
 
         // Set the texture wrapping parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);   
@@ -74,7 +76,7 @@ void Material::SetUniforms()
 {
     // Texture
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
+    glBindTexture(GL_TEXTURE_2D, albedoTexID);
     auto loc_texture = glGetUniformLocation(shader->GetProgram(), "albedoTexture");
     glUniform1i(loc_texture, 0);
 }

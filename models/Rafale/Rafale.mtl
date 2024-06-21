@@ -1,0 +1,46 @@
+# Blender 3.6.2 MTL File: 'Rafale.blend'
+# www.blender.org
+
+newmtl low_Material__29.001
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Pr 0.400000
+Pm 0.000000
+map_Kd low_Material _29_Diffuse.jpg
+
+newmtl low_Material__30.001
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Pr 0.400000
+Pm 0.000000
+map_Kd low_Material _30_Diffuse.jpg
+
+newmtl low_Material__31.001
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Pr 0.400000
+Pm 0.000000
+map_Kd low_Material _31_Diffuse.jpg
+
+newmtl low_Material__32.001
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Pr 0.400000
+Pm 0.000000
+map_Kd low_Material _32_Diffuse.jpg

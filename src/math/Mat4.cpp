@@ -170,9 +170,23 @@ Mat4 Mat4::lookAt(const Vec3& eye, const Vec3& center, const Vec3& up)
     return Mat4();
 }
 
+Mat4 Mat4::transpose(const Mat4& mat)
+{
+    Mat4 result;
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
+            result(i, j) = mat(j, i);
+        }
+    }
+    return result;
+}
+
+
 Mat4 Mat4::inverse(const Mat4& m)
 {
-    Mat4 inv;
+    Mat4 inv = Mat4();
     float det;
     int i;
 
@@ -309,31 +323,31 @@ Mat4 Mat4::inverse(const Mat4& m)
 void Mat4::scale(float sx, float sy, float sz)
 {
     Mat4 scalingMatrix = Mat4::scaling(sx, sy, sz);
-    *this = *this * scalingMatrix;
+    *this = scalingMatrix * *this;
 }
 
 void Mat4::rotate_x(float angle)
 {
     Mat4 rotationMatrix = Mat4::rotation_x(angle);
-    *this = *this * rotationMatrix;
+    *this = rotationMatrix * *this;
 }
 
 void Mat4::rotate_y(float angle)
 {
     Mat4 rotationMatrix = Mat4::rotation_y(angle);
-    *this = *this * rotationMatrix;
+    *this = rotationMatrix * *this;
 }
 
 void Mat4::rotate_z(float angle)
 {
     Mat4 rotationMatrix = Mat4::rotation_z(angle);
-    *this = *this * rotationMatrix;
+    *this = rotationMatrix * *this;
 }
 
 void Mat4::translate(float tx, float ty, float tz)
 {
     Mat4 translationMatrix = Mat4::translation(tx, ty, tz);
-    *this = *this * translationMatrix;
+    *this = translationMatrix * *this;
 }
 
 void Mat4::rotate(float x, float y, float z, const Vec3& point)
@@ -353,7 +367,7 @@ void Mat4::rotate(float x, float y, float z, const Vec3& point)
 
     // Translate back from the point
     Mat4 translationBack = Mat4::translation(point.x, point.y, point.z);
-    *this = *this * translationBack;
+    *this = translationBack * *this;
 }
 
 void Mat4::scale(const Vec3& scale)

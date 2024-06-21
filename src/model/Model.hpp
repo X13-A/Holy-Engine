@@ -4,13 +4,14 @@
 #include "../materials/Material.hpp"
 #include "../geometry/Mesh.hpp"
 #include "../geometry/Transform.hpp"
+#include "Shape.hpp"
+#include <vector>
 
 class Model
 {
 public:
     Transform* transform;
-    Mesh* mesh;
-    Material* material;
+    std::vector<Shape*> shapes;
 
     void Init();
     void Draw(Camera *camera);

@@ -3,11 +3,11 @@
 #include "../math/Math.hpp"
 #include <iostream>
 
-Transform::Transform(const Vec3& position, const Vec3& rotation, const Vec3& scale) : _transformMatrix(Mat4()), _position(position), _rotation(rotation), _scale(scale)
+Transform::Transform(const Vec3& position, const Vec3& rotation, const Vec3& scale) : _transformMatrix(Mat4())
 {
 	setPosition(position);
-	setRotation(rotation);
 	setScale(scale);
+	setRotation(rotation);
 }
 
 #pragma region Getters

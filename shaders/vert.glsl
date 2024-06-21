@@ -10,12 +10,13 @@ out vec3 Normal;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
+uniform mat4 normalMatrix;
 uniform mat4 projectionMatrix;
 
 void main(void) 
 {
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(a_position, 1.0);
-    Normal = a_normal; // TODO: use inverse transpose of modelMatrix
+    Normal = (normalMatrix * vec4(a_normal, 1)).xyz; // TODO: use inverse transpose of modelMatrix
     TexCoords = a_uv;
     WorldPos = (modelMatrix * vec4(a_position, 1.0)).xyz;
 }

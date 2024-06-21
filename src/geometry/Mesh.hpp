@@ -16,7 +16,6 @@ public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    void Load(const std::string &filename);
     void Init();
     void Destroy();
 };

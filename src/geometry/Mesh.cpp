@@ -1,16 +1,7 @@
 #include "Mesh.hpp"
 #include "../math/Mat4.hpp"
-#include "mesh_loader.hpp"
 #include "Transform.hpp"
 #include "../camera/Camera.hpp"
-
-void Mesh::Load(const std::string& filename)
-{
-    MeshLoader loader;
-    loader.load(filename, vertices, indices);
-    std::cout << "- Vertices: " << vertices.size() << std::endl;
-    std::cout << "- Indices: " << indices.size() << std::endl;
-}
 
 void Mesh::Init()
 {

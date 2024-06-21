@@ -8,7 +8,7 @@
 class LitMaterial : public Material
 {
 public:
-    float smoothness;
+    float roughness;
     float metallic;
 
     // External parameters

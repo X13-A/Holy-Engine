@@ -26,8 +26,8 @@ void LitMaterial::SetUniforms()
     auto loc_metallic = glGetUniformLocation(shader->GetProgram(), "metallic");
     glUniform1f(loc_metallic, metallic);
 
-    auto loc_smoothness = glGetUniformLocation(shader->GetProgram(), "smoothness");
-    glUniform1f(loc_smoothness, smoothness);
+    auto loc_roughness = glGetUniformLocation(shader->GetProgram(), "roughness");
+    glUniform1f(loc_roughness, roughness);
 }
 
 void LitMaterial::Attach(Camera *camera, SceneLightInfo* lightInfo)

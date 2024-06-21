@@ -36,6 +36,7 @@ public:
     static Mat4 orthographic(float left, float right, float top, float bottom, float near, float far);
     static Mat4 perspective(float angle, float ratio, float near, float far);
     static Mat4 inverse(const Mat4& mat);
+    static Mat4 transpose(const Mat4 &mat);
     static Mat4 lookAt(const Vec3 &eye, const Vec3 &center, const Vec3 &up);
 
     void scale(float sx, float sy, float sz);

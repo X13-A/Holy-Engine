@@ -4,11 +4,15 @@ in vec2 TexCoords;
 in vec3 WorldPos;
 in vec3 Normal;
 
-// material parameters
+// Texture parameters
+uniform sampler2D albedoTexture;
+
+// Material parameters
 uniform float metallic;
-uniform float smoothness; // Change this to roughness internally
+uniform float roughness;
 uniform vec3 ambientLight;
 
+// Lighting parameters
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 camPos;
@@ -25,11 +29,11 @@ void main()
 {	
     // Prevent removal by optimizer
     vec2 uv = TexCoords;
+    vec3 texAlbedo = texture(albedoTexture, uv).rgb;
 
-    vec3 albedo = vec3(1, 0, 0) + uv.x;
+    vec3 albedo = texAlbedo;
     vec3 N = normalize(Normal);
     vec3 V = normalize(camPos - WorldPos);
-    float roughness = 1.0 - smoothness; // Smoothness to roughness
 
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);

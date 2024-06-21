@@ -9,14 +9,16 @@ class Material
 protected:
 
 public:
-    GLuint texID;
+    GLuint albedoTexID;
+    std::string albedoPath;
+    
     GLShader *shader;
     std::string vert_path;
     std::string frag_path;
 
     virtual void Init(std::string vert_path, std::string frag_path);
     virtual void SetUniforms();
-    void SetTexture(const std::string &filename);
+    void SetAlbedoTexture(const std::string &filename);
 };
 
 #endif
