@@ -14,13 +14,14 @@ void CreativeControls::handleMouseMove(float xoffset, float yoffset)
     if (pitch > 89.0f) pitch = 89.0f;
     if (pitch < -89.0f) pitch = -89.0f;
 
+    camera->transform.setPitchYaw(pitch, yaw);
     // camera->transform.setPitchYaw(pitch, yaw); // TODO: Fix this method
 
     // std::cout << "xOffset: " << xoffset << ", yOffset: " << yoffset << std::endl;
     // std::cout << "FPS: " << 1.0f / Time::deltaTime() << std::endl;
     // std::cout << "yaw: " << yaw << ", pitch: " << pitch << std::endl;
 
-    Vec3 direction;
+    // Vec3 direction;
     // direction.x = -cos(radians(yaw)) * cos(radians(pitch));
     // direction.y = sin(radians(pitch));
     // direction.z = sin(radians(yaw)) * cos(radians(pitch));
@@ -45,26 +46,26 @@ void CreativeControls::update(InputManager* inputManager)
 {
     if (inputManager->isKeyPressed(KeyboardKey::Space))
     {
-        camera->transform.translate(Vec3(0, moveSpeed * Time::deltaTime(), 0));
+        camera->transform.translateLocal(Vec3(0, moveSpeed * Time::deltaTime(), 0));
     }
     if (inputManager->isKeyPressed(KeyboardKey::LSHIFT))
     {
-        camera->transform.translate(Vec3(0, -moveSpeed * Time::deltaTime(), 0));
+        camera->transform.translateLocal(Vec3(0, -moveSpeed * Time::deltaTime(), 0));
     }
     if (inputManager->isKeyPressed(KeyboardKey::A))
     {
-        camera->transform.translate(Vec3(-moveSpeed * Time::deltaTime(), 0, 0));
+        camera->transform.translateLocal(Vec3(-moveSpeed * Time::deltaTime(), 0, 0));
     }
     if (inputManager->isKeyPressed(KeyboardKey::D))
     {
-        camera->transform.translate(Vec3(moveSpeed * Time::deltaTime(), 0, 0));
+        camera->transform.translateLocal(Vec3(moveSpeed * Time::deltaTime(), 0, 0));
     }
     if (inputManager->isKeyPressed(KeyboardKey::W))
     {
-        camera->transform.translate(Vec3(0, 0, -moveSpeed * Time::deltaTime()));
+        camera->transform.translateLocal(Vec3(0, 0, -moveSpeed * Time::deltaTime()));
     }
     if (inputManager->isKeyPressed(KeyboardKey::S))
     {
-        camera->transform.translate(Vec3(0, 0, moveSpeed * Time::deltaTime()));
+        camera->transform.translateLocal(Vec3(0, 0, moveSpeed * Time::deltaTime()));
     }
 }

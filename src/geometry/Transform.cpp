@@ -77,9 +77,7 @@ void Transform::setPosition(const Vec3& newPosition)
 
 void Transform::setPitchYaw(float pitch, float yaw)
 {
-	// TODO
-    std::cerr << "setPitchYaw not implemented" << std::endl;
-    exit(1);
+    setRotation(Vec3(pitch, yaw, 0.0));
 }
 
 void Transform::lookat(const Vec3& target, const Vec3& up)
