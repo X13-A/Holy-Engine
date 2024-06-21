@@ -89,6 +89,7 @@ void Transform::lookat(const Vec3& target, const Vec3& up)
     exit(1);
 }
 
+// TODO: Fix as it's broken.
 void Transform::setRotation(const Vec3& newRotation)
 {
     // Reset the transform matrix to identity
@@ -112,7 +113,6 @@ void Transform::setRotation(const Vec3& newRotation)
     // Update the rotation
     _rotation = newRotation;
 }
-
 
 #pragma endregion
 

@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 bool ValidateShader(GLuint shader)
 {
@@ -39,28 +40,40 @@ bool ValidateShader(GLuint shader)
 
 bool GLShader::LoadVertexShader(const char* filename)
 {
-	// 1. Charger le fichier en memoire
-	std::ifstream fin(filename, std::ios::in | std::ios::binary);
-	fin.seekg(0, std::ios::end);
-	uint32_t length = (uint32_t)fin.tellg();
-	fin.seekg(0, std::ios::beg);
-	char* buffer = nullptr;
-	buffer = new char[length + 1];
-	buffer[length] = '\0';
-	fin.read(buffer, length);
+    std::ifstream fin(filename, std::ios::in | std::ios::binary);
+    if (!fin.is_open())
+    {
+        std::cerr << "Failed to open vertex shader file: " << filename << std::endl;
+        return false;
+    }
 
-	// 2. Creer le shader object
-	m_VertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(m_VertexShader, 1, &buffer, nullptr);
-	// 3. Le compiler
-	glCompileShader(m_VertexShader);
-	// 4. Nettoyer
-	delete[] buffer;
-	fin.close();	// non obligatoire ici
-	
-	// 5. 
-	// verifie le status de la compilation
-	return ValidateShader(m_VertexShader);
+    fin.seekg(0, std::ios::end);
+    uint32_t length = static_cast<uint32_t>(fin.tellg());
+    fin.seekg(0, std::ios::beg);
+
+    std::vector<char> buffer(length + 1);
+    buffer[length] = '\0';
+    fin.read(buffer.data(), length);
+    fin.close();
+
+    m_VertexShader = glCreateShader(GL_VERTEX_SHADER);
+    if (m_VertexShader == 0)
+    {
+        std::cerr << "Failed to create vertex shader object" << std::endl;
+        return false;
+    }
+
+    const char* source = buffer.data();
+    glShaderSource(m_VertexShader, 1, &source, nullptr);
+    glCompileShader(m_VertexShader);
+
+    if (!ValidateShader(m_VertexShader))
+    {
+        std::cerr << "Vertex shader compilation failed" << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 bool GLShader::LoadGeometryShader(const char* filename)

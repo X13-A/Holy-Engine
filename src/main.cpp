@@ -11,12 +11,34 @@
 #include "math/Vec3.hpp"
 #include "math/Vec2.hpp"
 #include "geometry/Mesh.hpp"
+#include "grid/Grid.hpp"
 #include "math/Mat4.hpp"
 #include "camera/Camera.hpp"
 #include "geometry/Transform.hpp"
 #include "window/WindowManager.hpp"
 #include "input/InputManager.hpp"
 #include "controls/CreativeControls.hpp"
+
+#include "model/Model.hpp"
+#include "materials/Material.hpp"
+#include "materials/LitMaterial.hpp"
+#include "light/SceneLightInfo.hpp"
+
+Model* CreateModel(const char* meshPath, Material* material)
+{
+    Transform* transform = new Transform(Vec3(0, 0, 0), Vec3(), Vec3(1, 1, 1));
+    
+    Mesh* mesh = new Mesh();
+    mesh->Load(meshPath);
+    mesh->Init();
+
+    Model *model = new Model();
+    model->transform = transform;
+    model->mesh = mesh;
+    model->material = material;
+    model->Init();
+    return model;
+}
 
 struct Application
 {
@@ -25,9 +47,11 @@ public:
     InputManager* inputManager;
     CreativeControls* cameraControls;
 
-    std::vector<Mesh> meshes;
-    std::vector<Transform*> transforms;
     Camera* cam;
+    WireFrame grid;
+
+    SceneLightInfo lightInfo;
+    std::vector<Model*> models;
 
     int width = 640;
     int height = 640;
@@ -49,29 +73,38 @@ public:
             std::cerr << "Failed to initialize GLEW" << std::endl;
             exit(EXIT_FAILURE);
         }
-        glCullFace(GL_FRONT);
+        glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         stbi_set_flip_vertically_on_load(true);
 
-        // Init meshes
-        Mesh mesh1;
-        mesh1.Load("models/Rafale.obj");
-        mesh1.Init();
-        meshes.push_back(mesh1);
-        Transform* transform1 = new Transform(Vec3(0, 0, -15), Vec3(), Vec3(1, 1, 1));
-        transforms.push_back(transform1);
+        LitMaterial *rafaleMaterial = new LitMaterial();
+        rafaleMaterial->Init("./shaders/vert.glsl", "./shaders/frag.glsl");
+        rafaleMaterial->Attach(cam, &lightInfo);
+        rafaleMaterial->metallic = 0.0f;
+        rafaleMaterial->smoothness = 0.9f;
+        Model *rafale = CreateModel("./models/Rafale.obj", rafaleMaterial);
+        models.push_back(rafale);
 
-        // Mesh mesh2;
-        // mesh2.Load("models/Box.obj");
-        // mesh2.Init();
-        // meshes.push_back(mesh2);
-        // Transform* transform2 = new Transform(Vec3(0, 0, 0), Vec3(), Vec3(10, 0.1, 10));
-        // transforms.push_back(transform2);
+        LitMaterial *catMaterial = new LitMaterial();
+        catMaterial->Init("./shaders/vert.glsl", "./shaders/frag.glsl");
+        catMaterial->Attach(cam, &lightInfo);
+        catMaterial->metallic = 1.0f;
+        catMaterial->smoothness = 0.9f;
+        Model *cat = CreateModel("./models/Cat.obj", catMaterial);
+        models.push_back(cat);
+        cat->transform->setPosition(Vec3(10, 0, 0));
+        cat->transform->setScale(Vec3(0.2, 0.2, 0.2));
+        // Init grid
+        grid.GenerateGrid(20.0, 1.0);
+        grid.Init();
 
-        // Mat4 transformMatrix;
-        cam->transform.setPosition(Vec3(0, 0, 0));
+        // Lighting
+        lightInfo.lightColor = Vec3(5, 5, 5);
+        lightInfo.lightPos = Vec3(0, 10, 0);
+        lightInfo.ambientLight = Vec3(1, 1, 1) * 0.05;
 
+        cam->transform.setPosition(Vec3(0, 0, 10));
     }
 
     void Update()
@@ -80,14 +113,28 @@ public:
         inputManager->update(windowManager->getWindow());
         cameraControls->update(inputManager);
 
+        // Move light
+        float time = Time::time();
+        float radius = 10.0f;
+        float lightX = radius * cos(time);
+        float lightZ = radius * sin(time);
+        float lightY = 5.0f;
+        lightInfo.lightPos = Vec3(lightX, lightY, lightZ);
+
+        if (inputManager->isKeyPressed(KeyboardKey::Escape))
+        {
+            Terminate();
+            exit(0);
+        }
+
+        // Ensure consistent calculations with matrices
         Vec3 pos = cam->transform.getPosition();
         Vec3 matrixPos = cam->transform.getTransformMatrixPosition();
         float delta = Vec3::distance(pos, matrixPos);
         if (delta > 0)
         {
-            std::cout << "ERROR: Wrong calculation of transformation matrix (delta: " << delta << ")" << std::endl;
+            std::cout << "WARNING: Wrong calculation of transformation matrix (delta: " << delta << ")" << std::endl;
         }
-        pos.printValues();
     }
 
     void Render()
@@ -95,9 +142,10 @@ public:
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (int i = 0; i < meshes.size(); i++)
+        grid.Draw(*cam);
+        for (std::size_t i = 0; i < models.size(); i++)
         {
-            meshes[i].Draw(*transforms[i], *cam);
+            models[i]->Draw(cam);
         }
 
         /* Swap front and back buffers */
@@ -109,12 +157,7 @@ public:
 
     void Terminate()
     {
-        // Deallocate resources
-        for (int i = 0; i < meshes.size(); i++)
-        {
-            meshes[i].Destroy();
-            free(transforms[i]);
-        }
+        // TODO: Deallocate resources
         glfwTerminate();
     }
 };

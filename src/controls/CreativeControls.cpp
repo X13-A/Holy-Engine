@@ -14,7 +14,7 @@ void CreativeControls::handleMouseMove(float xoffset, float yoffset)
     if (pitch > 89.0f) pitch = 89.0f;
     if (pitch < -89.0f) pitch = -89.0f;
 
-    camera->transform.setPitchYaw(pitch, yaw); // TODO: Fix this method
+    // camera->transform.setPitchYaw(pitch, yaw); // TODO: Fix this method
 
     // std::cout << "xOffset: " << xoffset << ", yOffset: " << yoffset << std::endl;
     // std::cout << "FPS: " << 1.0f / Time::deltaTime() << std::endl;

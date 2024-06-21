@@ -8,8 +8,12 @@ CAMERA_DIR = $(SRC_DIR)/camera
 COMMON_DIR = $(SRC_DIR)/common
 CONTROLS_DIR = $(SRC_DIR)/controls
 GEOMETRY_DIR = $(SRC_DIR)/geometry
+GRID_DIR = $(SRC_DIR)/grid
 INPUT_DIR = $(SRC_DIR)/input
+LIGHT_DIR = $(SRC_DIR)/light
+MATERIALS_DIR = $(SRC_DIR)/materials
 MATH_DIR = $(SRC_DIR)/math
+MODEL_DIR = $(SRC_DIR)/model
 UTILS_DIR = $(SRC_DIR)/utils
 WINDOW_DIR = $(SRC_DIR)/window
 
@@ -18,13 +22,17 @@ CAMERA_SRC = $(wildcard $(CAMERA_DIR)/*.cpp)
 COMMON_SRC = $(wildcard $(COMMON_DIR)/*.cpp)
 CONTROLS_SRC = $(wildcard $(CONTROLS_DIR)/*.cpp)
 GEOMETRY_SRC = $(wildcard $(GEOMETRY_DIR)/*.cpp)
+GRID_SRC = $(wildcard $(GRID_DIR)/*.cpp)
 INPUT_SRC = $(wildcard $(INPUT_DIR)/*.cpp)
+LIGHT_SRC = $(wildcard $(LIGHT_DIR)/*.cpp)
+MATERIALS_SRC = $(wildcard $(MATERIALS_DIR)/*.cpp)
 MATH_SRC = $(wildcard $(MATH_DIR)/*.cpp)
+MODEL_SRC = $(wildcard $(MODEL_DIR)/*.cpp)
 UTILS_SRC = $(wildcard $(UTILS_DIR)/*.cpp)
 WINDOW_SRC = $(wildcard $(WINDOW_DIR)/*.cpp)
 MAIN_SRC = $(SRC_DIR)/main.cpp
 
-SRC = $(CAMERA_SRC) $(COMMON_SRC) $(CONTROLS_SRC) $(GEOMETRY_SRC) $(INPUT_SRC) $(MATH_SRC) $(UTILS_SRC) $(WINDOW_SRC) $(MAIN_SRC)
+SRC = $(CAMERA_SRC) $(COMMON_SRC) $(CONTROLS_SRC) $(GEOMETRY_SRC) $(GRID_SRC) $(INPUT_SRC) $(LIGHT_SRC) $(MATERIALS_SRC) $(MATH_SRC) $(MODEL_SRC) $(UTILS_SRC) $(WINDOW_SRC) $(MAIN_SRC)
 
 # Object files
 OBJ = $(SRC:.cpp=.o)

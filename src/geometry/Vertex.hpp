@@ -10,7 +10,7 @@ struct Vertex
     Vec3 normal;
     Vec2 texcoord;
     Vertex();
-    Vertex(Vec3 _position, Vec3 _normal, Vec2 _texcoord);
+    Vertex(Vec3 _position, Vec3 _normal = Vec3(), Vec2 _texcoord = Vec2());
 };
 
 #endif
