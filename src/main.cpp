@@ -67,12 +67,13 @@ public:
     int width = 640;
     int height = 640;
 
-    GLuint FBO;
-    GLuint framebufferTexture;
-    GLuint RBO;
-    GLuint rectVAO, rectVBO;
+    unsigned int FBO;
+    unsigned int framebufferTexture;
+    unsigned int RBO;
+    unsigned int rectVAO, rectVBO;
 
     GLShader framebufferShader;
+    uint32_t framebufferProgram;
 
     void Init()
     {
@@ -127,7 +128,7 @@ public:
         framebufferShader.LoadFragmentShader("shaders/framebuffer.frag.glsl");
         framebufferShader.Create();
 
-        uint32_t framebufferProgram = framebufferShader.GetProgram();
+        framebufferProgram = framebufferShader.GetProgram();
         glUseProgram(framebufferProgram);
         glUniform1i(glGetUniformLocation(framebufferProgram, "ScreenTexture"),0);
 
@@ -141,6 +142,7 @@ public:
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+        
         // Create Frame Buffer Object
         glGenFramebuffers(1, &FBO);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -204,7 +206,7 @@ public:
         // Bind the custom framebuffer (FBO)
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         // Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		windowManager->clear(Vec4(1.0, 0.99, 0.90, 1.0));
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
 
@@ -215,17 +217,13 @@ public:
         }
 
         // Bind the default framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // Utiliser le shader d'inversion des couleurs et dessiner un rectangle couvrant l'écran
-        uint32_t framebufferProgram = framebufferShader.GetProgram();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// Utiliser le shader d'inversion des couleurs et dessiner un rectangle couvrant l'écran
         glUseProgram(framebufferProgram);
-        glUniform1i(glGetUniformLocation(framebufferProgram, "screenTexture"), 0);
-        glBindVertexArray(rectVAO);
-        glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
-        glBindTexture(GL_TEXTURE_2D, framebufferTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(rectVAO);
+		glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
+		glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(windowManager->getWindow());
