@@ -57,13 +57,14 @@ bool isInShadow(vec4 posLightSpace)
     vec3 projCoords = posLightSpace.xyz / posLightSpace.w;
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(ShadowMap, projCoords.xy).r; 
+    if (projCoords.z > 1.0) return false;
+    // get depth value from light's perspective
+    float lightDepth = texture(ShadowMap, projCoords.xy).r; 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // check whether current frag pos is in shadow
     float bias = 0.005;
-    return currentDepth - bias > closestDepth ? true : false;
+    return currentDepth - bias > lightDepth ? true : false;
 }
 
 vec4 getLightShaft(vec3 rayStart, vec3 rayDir, float depth, float offset)

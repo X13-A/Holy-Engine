@@ -71,7 +71,7 @@ public:
         
         inputManager->init();
         inputManager->attachControls(cameraControls);
-        windowManager->init(inputManager, width, height, "Hello Engine");
+        windowManager->init(inputManager, width, height, "Temple Engine");
 
         // Initialize GLEW
         if (glewInit() != GLEW_OK)
@@ -110,7 +110,7 @@ public:
         shadowMap.Create();
         shadowMap.Attach(&lightInfo);
 
-        cam->transform.setPosition(Vec3(0, 20, 0));
+        cam->transform.setPosition(Vec3(-5, 5, -5));
         cam->transform.setRotation(Vec3(-90, 0, 0));
 
         // Create Frame Buffer Object
