@@ -207,7 +207,6 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         // Specify the color of the background
 		windowManager->clear(Vec4(1.0, 0.99, 0.90, 1.0));
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
 
         // Dessiner la scène vers le FBO
