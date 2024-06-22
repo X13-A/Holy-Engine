@@ -18,7 +18,7 @@ public:
 
     virtual void Init(std::string vert_path, std::string frag_path);
     virtual void SetUniforms();
-    void SetAlbedoTexture(const std::string &filename);
+    void SetAlbedoMap(const std::string &filename);
 };
 
 #endif

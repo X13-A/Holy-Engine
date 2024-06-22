@@ -4,7 +4,7 @@
 void Shape::Init()
 {
     mesh->Init();
-    material->Init("shaders/vert.glsl", "shaders/frag.glsl"); // TODO: move consts
+    material->Init("shaders/lit/vert.glsl", "shaders/lit/frag.glsl"); // TODO: Make these parameters
 
     glBindVertexArray(mesh->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);

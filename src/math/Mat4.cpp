@@ -162,12 +162,30 @@ Mat4 Mat4::perspective(float fovy, float ratio, float near, float far)
     return res;
 }
 
+// UNTESTED
 Mat4 Mat4::lookAt(const Vec3& eye, const Vec3& center, const Vec3& up)
 {
-    // TODO
-    std::cerr << "lookAt not implemented" << std::endl;
-    exit(1);
-    return Mat4();
+    Vec3 f = Vec3::normalize(center - eye);
+    Vec3 u = Vec3::normalize(up);
+    Vec3 s = Vec3::normalize(Vec3::cross(f, u));
+    u = Vec3::cross(s, f);
+
+    Mat4 lookAt;
+    lookAt(0, 0) = s.x;
+    lookAt(0, 1) = s.y;
+    lookAt(0, 2) = s.z;
+    lookAt(0, 3) = -Vec3::dot(s, eye);
+
+    lookAt(1, 0) = u.x;
+    lookAt(1, 1) = u.y;
+    lookAt(1, 2) = u.z;
+    lookAt(1, 3) = -Vec3::dot(u, eye);
+
+    lookAt(2, 0) = -f.x;
+    lookAt(2, 1) = -f.y;
+    lookAt(2, 2) = -f.z;
+    lookAt(2, 3) = Vec3::dot(f, eye);
+    return lookAt;
 }
 
 Mat4 Mat4::transpose(const Mat4& mat)
@@ -183,7 +201,7 @@ Mat4 Mat4::transpose(const Mat4& mat)
     return result;
 }
 
-
+// Definitely wrote that myself
 Mat4 Mat4::inverse(const Mat4& m)
 {
     Mat4 inv = Mat4();
@@ -304,8 +322,7 @@ Mat4 Mat4::inverse(const Mat4& m)
 
     det = m(0, 0) * inv(0, 0) + m(0, 1) * inv(1, 0) + m(0, 2) * inv(2, 0) + m(0, 3) * inv(3, 0);
 
-    if (det == 0)
-        throw std::runtime_error("Matrix is not invertible");
+    if (det == 0) throw std::runtime_error("Matrix is not invertible");
 
     det = 1.0 / det;
 
@@ -350,6 +367,7 @@ void Mat4::translate(float tx, float ty, float tz)
     *this = translationMatrix * *this;
 }
 
+// TODO: Is broken. Fix when necessary
 void Mat4::rotate(float x, float y, float z, const Vec3& point)
 {
     // Translate to the point

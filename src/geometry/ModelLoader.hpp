@@ -6,6 +6,7 @@
 #include "../math/Vec3.hpp"
 #include "../model/Shape.hpp"
 #include "../light/SceneLightInfo.hpp"
+#include "../light/ShadowMap.hpp"
 #include "Vertex.hpp"
 
 #include <iostream>
@@ -16,7 +17,7 @@ class ModelLoader
 {
 public:
     tinyobj::ObjReaderConfig reader_config;
-    bool load(const std::string &inputObj, const std::string &inputMtl, std::vector<Shape*>& shapes, Camera* camera, SceneLightInfo* lightInfo);
+    bool load(const std::string &inputObj, const std::string &inputMtl, std::vector<Shape*>& shapes, Camera* camera, SceneLightInfo* lightInfo, ShadowMap* shadowMap);
 };
 
 #endif // MESH_LOADER_HPP

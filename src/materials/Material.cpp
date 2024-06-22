@@ -31,10 +31,10 @@ void Material::Init(std::string vert_path, std::string frag_path)
         exit(EXIT_FAILURE);
     }
 
-    SetAlbedoTexture(albedoPath);
+    SetAlbedoMap(albedoPath);
 }
 
-void Material::SetAlbedoTexture(const std::string& filename)
+void Material::SetAlbedoMap(const std::string& filename)
 {
     int width, height, comp;
     int desiredComp = 4;
@@ -77,6 +77,6 @@ void Material::SetUniforms()
     // Texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, albedoTexID);
-    auto loc_texture = glGetUniformLocation(shader->GetProgram(), "albedoTexture");
+    auto loc_texture = glGetUniformLocation(shader->GetProgram(), "albedoMap");
     glUniform1i(loc_texture, 0);
 }

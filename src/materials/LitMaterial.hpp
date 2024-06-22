@@ -4,6 +4,7 @@
 #include "../geometry/Transform.hpp"
 #include "../camera/Camera.hpp"
 #include "../light/SceneLightInfo.hpp"
+#include "../light/ShadowMap.hpp"
 
 class LitMaterial : public Material
 {
@@ -14,8 +15,9 @@ public:
     // External parameters
     Camera* camera;
     SceneLightInfo *lightInfo;
+    ShadowMap *shadowMap;
 
-    void Attach(Camera *camera, SceneLightInfo* lightInfo);
+    void Attach(Camera *camera, SceneLightInfo *lightInfo, ShadowMap* shadowMap);
     void SetUniforms() override;
 };
 

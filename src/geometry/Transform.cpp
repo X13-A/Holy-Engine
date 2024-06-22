@@ -42,17 +42,17 @@ const Vec3& Transform::getScale() const
 	return _scale;
 }
 
-const float& Transform::getYaw() const
+float Transform::getYaw() const
 {
     return atan2(_transformMatrix(2, 0), _transformMatrix(0, 0));
 }
 
-const float& Transform::getPitch() const
+float Transform::getPitch() const
 {
     return asin(-_transformMatrix(1, 0));
 }
 
-const float& Transform::getRoll() const
+float Transform::getRoll() const
 {
     return atan2(_transformMatrix(2, 1), _transformMatrix(2, 2));
 }
@@ -75,14 +75,9 @@ void Transform::setPosition(const Vec3& newPosition)
 	translate(delta);
 }
 
-void Transform::setPitchYaw(float pitch, float yaw)
-{
-    setRotation(Vec3(pitch, yaw, 0.0));
-}
-
 void Transform::lookat(const Vec3& target, const Vec3& up)
 {
-    // TODO
+    // TODO, if necessary
     std::cerr << "lookAt not implemented" << std::endl;
     exit(1);
 }
@@ -134,7 +129,6 @@ void Transform::translateLocal(const Vec3& offset)
 
     // Update the position and the transformation matrix
     _position += localOffset;
-	std::cout << localOffset.length() << std::endl;
 	_transformMatrix.translate(localOffset);
 }
 

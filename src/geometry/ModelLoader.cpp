@@ -9,6 +9,7 @@
 #include "../materials/LitMaterial.hpp"
 #include "../camera/Camera.hpp"
 #include "../light/SceneLightInfo.hpp"
+#include "../light/ShadowMap.hpp"
 
 std::vector<Vec2> components_to_vec2s(const std::vector<float> &components)
 {
@@ -31,7 +32,8 @@ std::vector<Vec3> components_to_vec3s(const std::vector<float>& components)
 }
 
 // Loads a model made of shapes with LitMaterials
-bool ModelLoader::load(const std::string &inputObj, const std::string &inputMtl, std::vector<Shape*>& shapes, Camera* camera, SceneLightInfo* lightInfo)
+// TODO: Last parameters really should not be there. Must find a better way to attach objects to the material.
+bool ModelLoader::load(const std::string &inputObj, const std::string &inputMtl, std::vector<Shape*>& shapes, Camera* camera, SceneLightInfo* lightInfo, ShadowMap* shadowMap)
 {
     // load the OBJ file
     tinyobj::attrib_t tiny_obj_attrib;
@@ -135,7 +137,7 @@ bool ModelLoader::load(const std::string &inputObj, const std::string &inputMtl,
             material->roughness = tiny_obj_material.roughness;
             material->metallic = tiny_obj_material.metallic;
         }
-        material->Attach(camera, lightInfo); // TODO: Used for PBR rendering. This operation should be moved elsewhere.
+        material->Attach(camera, lightInfo, shadowMap); // TODO: Used for PBR rendering. This operation should be moved elsewhere.
 
         Shape *res_shape = new Shape();
         res_shape->mesh = mesh;

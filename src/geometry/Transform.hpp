@@ -23,14 +23,13 @@ public:
 	Vec3 getTransformMatrixPosition() const;
 	const Vec3 &getRotation() const;
 	const Vec3& getScale() const;
-	const float& getYaw() const;
-	const float& getPitch() const;
-	const float& getRoll() const;
+	float getYaw() const;
+	float getPitch() const;
+	float getRoll() const;
 
 	void setScale(const Vec3& value);
 	void setPosition(const Vec3& newPosition);
 	void setRotation(const Vec3& newRotation);
-	void setPitchYaw(float pitch, float yaw);
 
 	void lookat(const Vec3 &target, const Vec3 &up);
 	void translate(const Vec3 &offset);

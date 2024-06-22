@@ -22,22 +22,19 @@
 #include "materials/Material.hpp"
 #include "materials/LitMaterial.hpp"
 #include "light/SceneLightInfo.hpp"
+#include "light/ShadowMap.hpp"
 
-// Model* CreateModel(const char* meshPath, Material* material)
-// {
-//     Transform* transform = new Transform(Vec3(0, 0, 0), Vec3(), Vec3(1, 1, 1));
-    
-//     Mesh* mesh = new Mesh();
-//     mesh->Load(meshPath);
-//     mesh->Init();
+const float screenVertices[6 * 4] =
+{
+    // positions   // texCoords
+    -1.0f,  1.0f,  0.0f, 1.0f,
+    -1.0f, -1.0f,  0.0f, 0.0f,
+    1.0f, -1.0f,  1.0f, 0.0f,
 
-//     Model *model = new Model();
-//     model->transform = transform;
-//     model->mesh = mesh;
-//     model->material = material;
-//     model->Init();
-//     return model;
-// }
+    -1.0f,  1.0f,  0.0f, 1.0f,
+    1.0f, -1.0f,  1.0f, 0.0f,
+    1.0f,  1.0f,  1.0f, 1.0f
+};
 
 struct Application
 {
@@ -50,7 +47,8 @@ public:
     WireFrame grid;
 
     SceneLightInfo lightInfo;
-    std::vector<Model*> models;
+    ShadowMap shadowMap;
+    std::vector<Model *> models;
 
     int width = 640;
     int height = 640;
@@ -80,13 +78,13 @@ public:
 
         Model* atrium = new Model();
         ModelLoader loader;
-        loader.load("models/Atrium/atrium.obj", "models/Atrium", atrium->shapes, cam, &lightInfo);
+        loader.load("models/Atrium/atrium.obj", "models/Atrium", atrium->shapes, cam, &lightInfo, &shadowMap);
         atrium->transform = new Transform(Vec3(0, 0.0, 0), Vec3(0, 0, 0), Vec3(1, 1, 1));
         atrium->Init();
         models.push_back(atrium);
 
         Model* rafale = new Model();
-        loader.load("models/Rafale/Rafale.obj", "models/Rafale", rafale->shapes, cam, &lightInfo);
+        loader.load("models/Rafale/Rafale.obj", "models/Rafale", rafale->shapes, cam, &lightInfo, &shadowMap);
         rafale->transform = new Transform(Vec3(0, 3.0, 0), Vec3(0, 90, 0), Vec3(0.05, 0.05, 0.05));
         rafale->Init();
         models.push_back(rafale);
@@ -99,6 +97,9 @@ public:
         lightInfo.lightColor = Vec3(1.0, 0.96, 0.71) * 3;
         lightInfo.lightPos = Vec3(0, 10, 0);
         lightInfo.ambientLight = Vec3(1, 1, 1) * 0.05;
+
+        shadowMap.Create();
+        shadowMap.Attach(&lightInfo);
 
         cam->transform.setPosition(Vec3(0, 20, 0));
         cam->transform.setRotation(Vec3(-90, 0, 0));
@@ -117,6 +118,8 @@ public:
         float lightZ = radius * sin(time);
         float lightY = 20.0f;
         lightInfo.lightPos = Vec3(lightX, lightY, lightZ);
+
+        models[1]->transform->setRotation(Vec3(0, Time::time() * 1, 0));
 
         if (inputManager->isKeyPressed(KeyboardKey::Escape))
         {
@@ -139,6 +142,12 @@ public:
         /* Render here */
         windowManager->clear(Vec4(1.0, 0.99, 0.90, 1.0));
         grid.Draw(*cam);
+        shadowMap.Compute(models);
+        glViewport(0, 0, width, height);
+        
+        // Quick hack to check shadowmap
+        // models[0]->shapes[0]->material->albedoTexID = shadowMap.GetDepthMap();
+        
         for (std::size_t i = 0; i < models.size(); i++)
         {
             models[i]->Draw(cam);

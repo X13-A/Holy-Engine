@@ -11,7 +11,7 @@ void WireFrame::GenerateGrid(int size, float spacing)
     vertices.clear();
     indices.clear();
 
-    for (int i = -size; i <= size; i++)
+    for (unsigned int i = -size; i <= size; i++)
     {
         vertices.push_back(Vec3(-size * spacing, 0.0f, i * spacing));
         vertices.push_back(Vec3(size * spacing, 0.0f, i * spacing));
@@ -20,7 +20,7 @@ void WireFrame::GenerateGrid(int size, float spacing)
         vertices.push_back(Vec3(i * spacing, 0.0f, size * spacing));
     }
 
-    for (int i = 0; i < vertices.size(); i += 2)
+    for (unsigned int i = 0; i < vertices.size(); i += 2)
     {
         indices.push_back(i);
         indices.push_back(i + 1);
@@ -31,13 +31,13 @@ void WireFrame::Init()
 {
     // Create and load shaders
     shader = new GLShader();
-    if (!shader->LoadVertexShader("shaders/grid.vert.glsl"))
+    if (!shader->LoadVertexShader("shaders/grid/vert.glsl"))
     {
         std::cerr << "Failed to load vertex shader" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    if (!shader->LoadFragmentShader("shaders/grid.frag.glsl"))
+    if (!shader->LoadFragmentShader("shaders/grid/frag.glsl"))
     {
         std::cerr << "Failed to load fragment shader" << std::endl;
         exit(EXIT_FAILURE);
