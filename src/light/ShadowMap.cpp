@@ -43,7 +43,7 @@ void ShadowMap::Create()
     float near = -0.1f, far = 50.0f;
     projectionMatrix = Mat4::orthographic(left, right, top, bottom, near, far);
 
-    width = 4096, height = 4096; // We are rich
+    width = 2048, height = 2048; // We are rich
     glGenFramebuffers(1, &FBO); 
     glGenTextures(1, &depthMap);
     glBindTexture(GL_TEXTURE_2D, depthMap);

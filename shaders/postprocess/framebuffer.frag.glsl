@@ -15,6 +15,8 @@ uniform vec3 cameraPos;
 uniform sampler2D ShadowMap;
 uniform mat4 lightMatrix;
 uniform float time;
+uniform float lightNoise;
+uniform int lightSteps;
 uniform vec3 lightColor;
 uniform float lightShaftIntensity;
 
@@ -69,7 +71,7 @@ bool isInShadow(vec4 posLightSpace)
 
 vec4 getLightShaft(vec3 rayStart, vec3 rayDir, float depth, float offset)
 {
-    float n = 20;
+    float n = lightSteps;
     float dstLimit = min(100, depth);
     float dstTravelled = offset;
     float stepSize = dstLimit / n;
@@ -102,7 +104,7 @@ void main()
     vec3 rayDir = normalize(viewDir);
     vec3 worldPos = rayOrigin + rayDir * depth;
 
-    float offset = whiteNoise(texCoords) * 2.5;
+    float offset = whiteNoise(texCoords) * lightNoise;
     vec4 lightShaftColor = getLightShaft(rayOrigin, rayDir, depth, offset);
     FragColor = screenColor * (1 - lightShaftColor.a) + vec4(lightShaftColor.rgb, 0) * lightShaftColor.a;
 }

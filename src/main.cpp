@@ -50,8 +50,8 @@ public:
     ShadowMap shadowMap;
     std::vector<Model *> models;
 
-    int width = 640;
-    int height = 640;
+    int width = 1600;
+    int height = 900;
 
     unsigned int FBO;
     unsigned int framebufferTexture;
@@ -64,14 +64,14 @@ public:
 
     void Init()
     {
-        cam = new Camera(60, width / height, 0.001f, 100.0f, Vec3(0, 0, 0));
+        cam = new Camera(60, (float) width / height, 0.001f, 100.0f, Vec3(0, 0, 0));
         inputManager = new InputManager();
         windowManager = new WindowManager();
         cameraControls = new CreativeControls(cam, 10.0f, 0.2f);
         
         inputManager->init();
         inputManager->attachControls(cameraControls);
-        windowManager->init(inputManager, width, height, "Temple Engine");
+        windowManager->init(inputManager, width, height, "Holy Engine");
 
         // Initialize GLEW
         if (glewInit() != GLEW_OK)
@@ -85,18 +85,30 @@ public:
         glEnable(GL_DEPTH_TEST);
         stbi_set_flip_vertically_on_load(true);
 
-        Model* atrium = new Model();
         ModelLoader loader;
+        Model* atrium = new Model();
         loader.load("models/Atrium/atrium.obj", "models/Atrium", atrium->shapes, cam, &lightInfo, &shadowMap);
-        atrium->transform = new Transform(Vec3(0, 0.0, 0), Vec3(0, 0, 0), Vec3(1, 1, 1));
+        atrium->transform = new Transform(Vec3(0.0, 0.0, 0), Vec3(0, 0, 0), Vec3(1.25, 1.25, 1.25));
         atrium->Init();
         models.push_back(atrium);
 
-        Model* rafale = new Model();
-        loader.load("models/Rafale/Rafale.obj", "models/Rafale", rafale->shapes, cam, &lightInfo, &shadowMap);
-        rafale->transform = new Transform(Vec3(0, 3.0, 0), Vec3(0, 90, 0), Vec3(0.05, 0.05, 0.05));
-        rafale->Init();
-        models.push_back(rafale);
+        // Model* rafale = new Model();
+        // loader.load("models/Rafale/Rafale.obj", "models/Rafale", rafale->shapes, cam, &lightInfo, &shadowMap);
+        // rafale->transform = new Transform(Vec3(0, 3.0, 0), Vec3(0, 90, 0), Vec3(0.05, 0.05, 0.05));
+        // rafale->Init();
+        // models.push_back(rafale);
+
+        // Model* temple = new Model();
+        // loader.load("models/EvoraTemple/34Million.obj", "models/EvoraTemple", temple->shapes, cam, &lightInfo, &shadowMap);
+        // temple->transform = new Transform(Vec3(0, -3, 0), Vec3(-90, -40, 0), Vec3(1, 1, 1));
+        // temple->Init();
+        // models.push_back(temple);
+
+        Model* moai = new Model();
+        loader.load("models/Moai/moai.obj", "models/Moai", moai->shapes, cam, &lightInfo, &shadowMap);
+        moai->transform = new Transform(Vec3(0, 0.0, 0), Vec3(0, 0, 0), Vec3(0.2, 0.2, 0.2));
+        moai->Init();
+        models.push_back(moai);
 
         // Init grid
         grid.GenerateGrid(20.0, 1.0);
@@ -179,18 +191,19 @@ public:
     void Update()
     {
         Time::update();
+        std::cout << "FPS: " << 1.0 / Time::deltaTime() << std::endl;
         inputManager->update(windowManager->getWindow());
         cameraControls->update(inputManager);
 
         // Move light
         float time = Time::time();
+        float speed = 0.1f;
         float radius = 20.0f;
-        float lightX = radius * cos(time);
-        float lightZ = radius * sin(time);
+        float lightX = radius * cos(time * speed);
+        float lightZ = radius * sin(time * speed);
         float lightY = 20.0f;
-        lightInfo.lightPos = Vec3(10, lightY, 10);
-
-        models[1]->transform->setRotation(Vec3(0, Time::time() * 1, 0));
+        lightInfo.lightPos = Vec3(lightX, lightY, lightZ);
+        // models[1]->transform->setRotation(Vec3(0, Time::time() * 1, 0));
 
         if (inputManager->isKeyPressed(KeyboardKey::Escape))
         {
@@ -258,6 +271,8 @@ public:
         glUniform3f(glGetUniformLocation(framebufferProgram, "lightColor"), lightInfo.lightColor.x, lightInfo.lightColor.y, lightInfo.lightColor.z);
         glUniform1f(glGetUniformLocation(framebufferProgram, "time"), Time::time());
         glUniform1f(glGetUniformLocation(framebufferProgram, "lightShaftIntensity"), 0.2f);
+        glUniform1f(glGetUniformLocation(framebufferProgram, "lightNoise"), 2.5f);
+        glUniform1i(glGetUniformLocation(framebufferProgram, "lightSteps"), 20);
         glDisable(GL_DEPTH_TEST);        
 		glDrawArrays(GL_TRIANGLES, 0, 6);
         glEnable(GL_DEPTH_TEST);
