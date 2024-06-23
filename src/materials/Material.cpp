@@ -30,11 +30,9 @@ void Material::Init(std::string vert_path, std::string frag_path)
         std::cerr << "Failed to create shader program" << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    SetAlbedoMap(albedoPath);
 }
 
-void Material::SetAlbedoMap(const std::string& filename)
+void Material::LoadMap(const std::string& filename, GLuint* texID)
 {
     int width, height, comp;
     int desiredComp = 4;
@@ -42,8 +40,8 @@ void Material::SetAlbedoMap(const std::string& filename)
 
     if (data)
     {
-        glGenTextures(1, &albedoTexID);
-        glBindTexture(GL_TEXTURE_2D, albedoTexID);
+        glGenTextures(1, texID);
+        glBindTexture(GL_TEXTURE_2D, *texID);
 
         // Set the texture wrapping parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);   

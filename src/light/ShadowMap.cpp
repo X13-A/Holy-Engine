@@ -40,7 +40,7 @@ void ShadowMap::Create()
     float size = 30;
     float left = -size, right = size;
     float top = size, bottom = -size;
-    float near = -0.1f, far = 50.0f;
+    float near = -0.1f, far = 100.0f;
     projectionMatrix = Mat4::orthographic(left, right, top, bottom, near, far);
 
     width = 2048, height = 2048; // We are rich
@@ -70,7 +70,7 @@ void ShadowMap::Compute(std::vector<Model*>& models)
     glUseProgram(shaderProgram);
 
     // TODO: Only compute when light pos changes
-    viewMatrix = Mat4::lookAt(lightInfo->lightPos, target, Vec3(0, 1, 0));
+    viewMatrix = Mat4::lookAt(Vec3::normalize(lightInfo->lightPos) * 30, target, Vec3(0, 1, 0));
     lightSpaceMatrix = projectionMatrix * viewMatrix; 
 
     auto loc_viewMatrix = glGetUniformLocation(shaderProgram, "viewMatrix");

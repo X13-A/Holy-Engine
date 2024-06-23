@@ -23,18 +23,8 @@
 #include "materials/LitMaterial.hpp"
 #include "light/SceneLightInfo.hpp"
 #include "light/ShadowMap.hpp"
+#include "../postprocess/VolumetricFog.hpp"
 
-const float screenVertices[6 * 4] =
-{
-    // positions   // texCoords
-    -1.0f,  1.0f,  0.0f, 1.0f,
-    -1.0f, -1.0f,  0.0f, 0.0f,
-    1.0f, -1.0f,  1.0f, 0.0f,
-
-    -1.0f,  1.0f,  0.0f, 1.0f,
-    1.0f, -1.0f,  1.0f, 0.0f,
-    1.0f,  1.0f,  1.0f, 1.0f
-};
 
 struct Application
 {
@@ -46,21 +36,13 @@ public:
     Camera* cam;
     WireFrame grid;
 
+    VolumetricFog volumetricFog;
     SceneLightInfo lightInfo;
     ShadowMap shadowMap;
     std::vector<Model *> models;
 
-    int width = 1600;
-    int height = 900;
-
-    unsigned int FBO;
-    unsigned int framebufferTexture;
-    unsigned int RBO;
-    unsigned int rectVAO, rectVBO;
-
-    GLShader framebufferShader;
-    uint32_t framebufferProgram;
-    GLuint depthTexture;
+    int width = 640;
+    int height = 640;
 
     void Init()
     {
@@ -92,6 +74,13 @@ public:
         atrium->Init();
         models.push_back(atrium);
 
+        // ModelLoader loader;
+        // Model* ancientTemple = new Model();
+        // loader.load("models/AncientTemple/ancient-temple-stylized.obj", "models/AncientTemple", ancientTemple->shapes, cam, &lightInfo, &shadowMap);
+        // ancientTemple->transform = new Transform(Vec3(0.0, 0.0, 0), Vec3(0, 0, 0), Vec3(0.5f, 0.5f, 0.5f));
+        // ancientTemple->Init();
+        // models.push_back(ancientTemple);
+
         // Model* rafale = new Model();
         // loader.load("models/Rafale/Rafale.obj", "models/Rafale", rafale->shapes, cam, &lightInfo, &shadowMap);
         // rafale->transform = new Transform(Vec3(0, 3.0, 0), Vec3(0, 90, 0), Vec3(0.05, 0.05, 0.05));
@@ -106,7 +95,7 @@ public:
 
         Model* moai = new Model();
         loader.load("models/Moai/moai.obj", "models/Moai", moai->shapes, cam, &lightInfo, &shadowMap);
-        moai->transform = new Transform(Vec3(0, 0.0, 0), Vec3(0, 0, 0), Vec3(0.2, 0.2, 0.2));
+        moai->transform = new Transform(Vec3(0, -0.5f, 0), Vec3(0, 0, 0), Vec3(0.2, 0.2, 0.2));
         moai->Init();
         models.push_back(moai);
 
@@ -125,67 +114,7 @@ public:
         cam->transform.setPosition(Vec3(-5, 5, -5));
         cam->transform.setRotation(Vec3(-90, 0, 0));
 
-        // Create Frame Buffer Object
-        glGenFramebuffers(1, &FBO);
-        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-
-        // Create Framebuffer Texture
-        glGenTextures(1, &framebufferTexture);
-        glBindTexture(GL_TEXTURE_2D, framebufferTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferTexture, 0);
-
-        // Create depth texture
-        glGenTextures(1, &depthTexture);
-        glBindTexture(GL_TEXTURE_2D, depthTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-
-
-        // Create Render Buffer Object
-        // glGenRenderbuffers(1, &RBO);
-        // glBindRenderbuffer(GL_RENDERBUFFER, RBO);
-        // glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-        // glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
-
-        // Error checking framebuffer
-        auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
-        {
-            std::cout << "Framebuffer error: " << fboStatus << std::endl;
-        }
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);  
-
-        // Post process shader
-        framebufferShader.LoadVertexShader("shaders/postprocess/framebuffer.vert.glsl");
-        framebufferShader.LoadFragmentShader("shaders/postprocess/framebuffer.frag.glsl");
-        framebufferShader.Create();
-        framebufferProgram = framebufferShader.GetProgram();
-        
-        // Set screen texture
-        glUseProgram(framebufferProgram);
-        glUniform1i(glGetUniformLocation(framebufferProgram, "ScreenTexture"), 0);
-        glUniform1i(glGetUniformLocation(framebufferProgram, "DepthTexture"), 1);
-        glUseProgram(0);
-
-        // Post process VAO
-        glGenVertexArrays(1, &rectVAO);
-        glGenBuffers(1, &rectVBO);
-        glBindVertexArray(rectVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, rectVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices), &screenVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+        volumetricFog.Init(width, height);
     }
 
     void Update()
@@ -197,13 +126,15 @@ public:
 
         // Move light
         float time = Time::time();
-        float speed = 0.1f;
+        float speed = 1.0f;
         float radius = 20.0f;
         float lightX = radius * cos(time * speed);
         float lightZ = radius * sin(time * speed);
         float lightY = 20.0f;
         lightInfo.lightPos = Vec3(lightX, lightY, lightZ);
         // models[1]->transform->setRotation(Vec3(0, Time::time() * 1, 0));
+        // models[1]->transform->setPosition(lightInfo.lightPos);
+        // lightInfo.lightPos.printValues();
 
         if (inputManager->isKeyPressed(KeyboardKey::Escape))
         {
@@ -228,7 +159,7 @@ public:
         glViewport(0, 0, width, height);
         
         // Bind the custom framebuffer (FBO)
-        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, volumetricFog.FBO);
 		windowManager->clear(Vec4(1.0, 0.99, 0.90, 1.0));
 
         // Draw scene to FBO
@@ -238,45 +169,8 @@ public:
             models[i]->Draw(cam);
         }
 
-        // Bind the default framebuffer
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        // Draw FBO color with post process shader
-        glUseProgram(framebufferProgram);
-		glBindVertexArray(rectVAO);
+        volumetricFog.Render(&shadowMap, cam, &lightInfo);
         
-        // Bind screen texture
-        glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, framebufferTexture);
-        glUniform1i(glGetUniformLocation(framebufferProgram, "ScreenTexture"), 0);
-
-        // Bind depth texture
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, depthTexture);
-        glUniform1i(glGetUniformLocation(framebufferProgram, "DepthTexture"), 1);
-
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, shadowMap.GetDepthMap());
-        glUniform1i(glGetUniformLocation(framebufferProgram, "ShadowMap"), 2);
-
-        glUniform1f(glGetUniformLocation(framebufferProgram, "near"), cam->getNear());
-        glUniform1f(glGetUniformLocation(framebufferProgram, "far"), cam->getFar());
-
-        Mat4 invProjection = Mat4::inverse(cam->getProjectionMatrix());
-        Mat4 invView = Mat4::inverse(cam->getViewMatrix());
-        glUniformMatrix4fv(glGetUniformLocation(framebufferProgram, "cameraInvProjection"), 1, GL_FALSE, invProjection.data());
-        glUniformMatrix4fv(glGetUniformLocation(framebufferProgram, "cameraInvView"), 1, GL_FALSE, invView.data());
-        glUniformMatrix4fv(glGetUniformLocation(framebufferProgram, "lightMatrix"), 1, GL_FALSE, shadowMap.GetLightSpaceMatrix().data());
-        glUniform3f(glGetUniformLocation(framebufferProgram, "cameraPos"), cam->transform.getPosition().x, cam->transform.getPosition().y, cam->transform.getPosition().z);
-        glUniform3f(glGetUniformLocation(framebufferProgram, "lightColor"), lightInfo.lightColor.x, lightInfo.lightColor.y, lightInfo.lightColor.z);
-        glUniform1f(glGetUniformLocation(framebufferProgram, "time"), Time::time());
-        glUniform1f(glGetUniformLocation(framebufferProgram, "lightShaftIntensity"), 0.2f);
-        glUniform1f(glGetUniformLocation(framebufferProgram, "lightNoise"), 2.5f);
-        glUniform1i(glGetUniformLocation(framebufferProgram, "lightSteps"), 20);
-        glDisable(GL_DEPTH_TEST);        
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-        glEnable(GL_DEPTH_TEST);
-        glActiveTexture(GL_TEXTURE0);
 
         // Swap front and back buffers
         glfwSwapBuffers(windowManager->getWindow());
@@ -287,7 +181,6 @@ public:
 
     void Terminate()
     {
-        framebufferShader.Destroy();
         // TODO: Deallocate resources
         glfwTerminate();
     }

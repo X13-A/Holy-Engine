@@ -77,14 +77,17 @@ vec4 getLightShaft(vec3 rayStart, vec3 rayDir, float depth, float offset)
     float stepSize = dstLimit / n;
     
     float lightScattered = 0;
-    
+    float absorptionCoefficient = 0.0005;
+
     while (dstTravelled < dstLimit)
     {
         vec3 rayPos = rayStart + rayDir * dstTravelled;
         vec4 fragPosLightSpace = lightMatrix * vec4(rayPos, 1.0);
         if (!isInShadow(fragPosLightSpace))
         {
-            lightScattered += 0.1 * stepSize * lightShaftIntensity;
+            // Beer's law
+            float transmittance = exp(-absorptionCoefficient * dstTravelled);
+            lightScattered += 0.1 * stepSize * lightShaftIntensity * transmittance;
         }
         dstTravelled += stepSize;
     }

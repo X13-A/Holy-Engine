@@ -9,12 +9,22 @@ in vec4 FragPosLightSpace;
 uniform sampler2D albedoMap;
 
 // Material parameters
-uniform float metallic;
-uniform float roughness;
+uniform float metallicUniform;
+uniform float roughnessUniform;
 uniform vec3 ambientLight;
 
+// PBR maps
+uniform bool hasNormalMap;
+uniform sampler2D normalMap;
+
+uniform bool hasRoughnessMap;
+uniform sampler2D roughnessMap;
+
+uniform bool hasMetallicMap;
+uniform sampler2D metallicMap;
+
 // Lighting parameters
-uniform vec3 lightPos;
+uniform vec3 lightDir;
 uniform vec3 lightColor;
 uniform vec3 camPos;
 
@@ -35,21 +45,38 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir);
 void main()
 {	
     vec2 uv = TexCoords;
-
-    vec3 texAlbedo = texture(albedoMap, uv).rgb;
-
-    vec3 albedo = texAlbedo;
     vec3 N = normalize(Normal);
+    float metallic = metallicUniform;
+    float roughness = roughnessUniform; 
+
+    // Read maps if available
+    if (hasNormalMap)
+    {
+        // TODO: unpack normal & convert them to world space
+    }
+    if (hasRoughnessMap)
+    {
+        roughness = texture(roughnessMap, uv).r;
+    }
+    if (hasMetallicMap)
+    {
+        metallic = texture(metallicMap, uv).r;
+    }
+
+    vec4 albedoRGBA = texture(albedoMap, uv);
+
+    vec3 albedo = albedoRGBA.rgb;
+    float alpha = albedoRGBA.a;
     vec3 V = normalize(camPos - WorldPos);
 
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);
 	           
     // Calculate per-light radiance
-    vec3 L = normalize(lightPos - WorldPos);
+    vec3 L = normalize(-lightDir);
     vec3 H = normalize(V + L);
     vec3 radiance = lightColor; // Directional light    
-    
+
     // Cook-Torrance BRDF
     float normalDistribution = DistributionGGX(N, H, roughness);
     float geometryFunction = GeometrySmith(N, V, L, roughness);
@@ -62,7 +89,7 @@ void main()
     vec3 numerator    = normalDistribution * geometryFunction * fresnelTerm;
     float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
     vec3 specular     = numerator / denominator;  
-        
+
     float normalDotLight = max(dot(N, L), 0.0);
     vec3 outgoingRadiance = (diffuseReflectance * albedo / PI + specular) * radiance * normalDotLight; 
   
@@ -73,7 +100,7 @@ void main()
     // Gamma correction
     color = pow(color, vec3(1.0/2.2));  
 
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(color, alpha);
 }
 
 float DistributionGGX(vec3 normal, vec3 halfway, float roughness)

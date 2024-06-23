@@ -9,8 +9,9 @@ void LitMaterial::SetUniforms()
     Material::SetUniforms();
     uint32_t shaderProgram = shader->GetProgram();
     // Lighting
-    auto loc_lightPos = glGetUniformLocation(shaderProgram, "lightPos");
-    glUniform3f(loc_lightPos, lightInfo->lightPos.x, lightInfo->lightPos.y, lightInfo->lightPos.z);
+    Vec3 lightDir = Vec3::normalize(lightInfo->lightPos * -1);
+    auto loc_lightPos = glGetUniformLocation(shaderProgram, "lightDir");
+    glUniform3f(loc_lightPos, lightDir.x, lightDir.y, lightDir.z);
 
     auto loc_lightColor = glGetUniformLocation(shaderProgram, "lightColor");
     glUniform3f(loc_lightColor, lightInfo->lightColor.x, lightInfo->lightColor.y, lightInfo->lightColor.z);
@@ -33,11 +34,44 @@ void LitMaterial::SetUniforms()
     glUniform3f(loc_camPos, camPos.x, camPos.y, camPos.z);
 
     // Material specific uniforms
-    auto loc_metallic = glGetUniformLocation(shaderProgram, "metallic");
+    auto loc_metallic = glGetUniformLocation(shaderProgram, "metallicUniform");
     glUniform1f(loc_metallic, metallic);
 
-    auto loc_roughness = glGetUniformLocation(shaderProgram, "roughness");
+    auto loc_roughness = glGetUniformLocation(shaderProgram, "roughnessUniform");
     glUniform1f(loc_roughness, roughness);
+
+    // Normal map
+    auto loc_hasNormalMap = glGetUniformLocation(shaderProgram, "hasNormalMap");
+    glUniform1i(loc_hasNormalMap, hasNormalMap ? 1 : 0);
+    if (hasNormalMap)
+    {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, normalTexID);
+        auto loc_texture = glGetUniformLocation(shader->GetProgram(), "normalMap");
+        glUniform1i(loc_texture, 1);
+    }
+
+    // Roughness map
+    auto loc_hasRoughnessMap = glGetUniformLocation(shaderProgram, "hasRoughnessMap");
+    glUniform1i(loc_hasRoughnessMap, hasRoughnessMap ? 1 : 0);
+    if (hasRoughnessMap)
+    {
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, roughnessTexID);
+        auto loc_texture = glGetUniformLocation(shader->GetProgram(), "roughnessMap");
+        glUniform1i(loc_texture, 2);
+    }
+
+    // Metallic map
+    auto loc_hasMetallicMap = glGetUniformLocation(shaderProgram, "hasMetallicMap");
+    glUniform1i(loc_hasMetallicMap, hasMetallicMap ? 1 : 0);
+    if (hasMetallicMap)
+    {
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, metallicTexID);
+        auto loc_texture = glGetUniformLocation(shader->GetProgram(), "metallicMap");
+        glUniform1i(loc_texture, 3);
+    }
 }
 
 void LitMaterial::Attach(Camera *camera, SceneLightInfo* lightInfo, ShadowMap* shadowMap)

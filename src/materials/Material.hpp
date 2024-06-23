@@ -18,7 +18,7 @@ public:
 
     virtual void Init(std::string vert_path, std::string frag_path);
     virtual void SetUniforms();
-    void SetAlbedoMap(const std::string &filename);
+    void LoadMap(const std::string& filename, GLuint* texID);
 };
 
 #endif

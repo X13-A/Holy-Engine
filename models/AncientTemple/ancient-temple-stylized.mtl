@@ -1,0 +1,147 @@
+# Blender 3.6.2 MTL File: 'None'
+# www.blender.org
+
+newmtl column
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd column_albedo.jpg
+map_Pr column_roughness.jpg
+map_Bump -bm 1.000000 column_normal.png
+
+newmtl ground
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd ground_albedo.jpg
+map_Pr ground_roughness.jpg
+map_Bump -bm 1.000000 ground_normal.png
+
+newmtl hand
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd hand_albedo.jpg
+map_Pr hand_roughness.jpg
+map_Bump -bm 0.600000 hand_normal.png
+
+newmtl ivy
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd ivy_albedo.jpg
+map_Pr ivy_roughness.jpg
+map_Bump -bm 1.000000 ivy_normal.png
+
+newmtl plinth
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Pr 0.500000
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd plinth_albedo.jpg
+map_Pr plinth_roughness.jpg
+map_Bump -bm 1.000000 plinth_normal.png
+
+newmtl rock_base
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd rock base_albedo.jpg
+map_Pr rock base_roughness.jpg
+map_Bump -bm 1.300000 rock base_normal.png
+
+newmtl statue.001
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd statue.001_albedo.jpg
+map_Pm statue.001_metallic.jpg
+map_Pr statue.001_roughness.jpg
+map_Bump -bm 1.000000 statue.001_normal.png
+
+newmtl steps
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd steps_albedo.jpg
+map_Pr steps_roughness.jpg
+map_Bump -bm 1.000000 steps_normal.png
+
+newmtl top_ring
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd top ring_albedo.jpg
+map_Pr top ring_roughness.jpg
+map_Bump -bm 1.000000 top ring_normal.png

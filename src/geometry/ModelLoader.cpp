@@ -119,21 +119,50 @@ bool ModelLoader::load(const std::string &inputObj, const std::string &inputMtl,
         mesh->indices = indices;
         mesh->vertices = vertices;
         
-        // Extract Material
+        // Set default values
         LitMaterial *material = new LitMaterial();
-        material->albedoPath = ""; // Default components
+        material->albedoPath = "";
+        material->normalPath = "";
+        material->metallicPath = "";
+        material->roughnessPath = "";
+        material->hasNormalMap = false;
+        material->hasMetallicMap = false;
+        material->hasRoughnessMap = false;
+
         material->roughness = 1;
         material->metallic = 0;
 
+        // Extract Material 
         int material_id = shape.mesh.material_ids.empty() ? -1 : shape.mesh.material_ids[0];
         if (material_id >= 0 && material_id < tiny_obj_materials.size())
         {
             tinyobj::material_t tiny_obj_material = tiny_obj_materials[material_id];
             
+            // Retrieve textures
             if (tiny_obj_material.diffuse_texname != "")
             {
                 material->albedoPath = inputMtl + "/" + tiny_obj_material.diffuse_texname;
+                material->LoadMap(material->albedoPath, &material->albedoTexID);
             }
+            if (tiny_obj_material.bump_texname != "")
+            {
+                material->normalPath = inputMtl + "/" + tiny_obj_material.bump_texname;
+                material->hasNormalMap = true;
+                material->LoadMap(material->normalPath, &material->normalTexID);
+            }
+            if (tiny_obj_material.roughness_texname != "")
+            {
+                material->roughnessPath = inputMtl + "/" + tiny_obj_material.roughness_texname;
+                material->hasRoughnessMap = true;
+                material->LoadMap(material->roughnessPath, &material->roughnessTexID);
+            }
+            if (tiny_obj_material.metallic_texname != "")
+            {
+                material->metallicPath = inputMtl + "/" + tiny_obj_material.metallic_texname;
+                material->hasMetallicMap = true;
+                material->LoadMap(material->metallicPath, &material->metallicTexID);
+            }
+
             material->roughness = tiny_obj_material.roughness;
             material->metallic = tiny_obj_material.metallic;
         }

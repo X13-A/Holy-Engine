@@ -17,6 +17,19 @@ public:
     SceneLightInfo *lightInfo;
     ShadowMap *shadowMap;
 
+    // Maps
+    GLuint normalTexID;
+    std::string normalPath;
+    bool hasNormalMap;
+
+    GLuint metallicTexID;
+    std::string metallicPath;
+    bool hasMetallicMap;
+
+    GLuint roughnessTexID;
+    std::string roughnessPath;
+    bool hasRoughnessMap;
+
     void Attach(Camera *camera, SceneLightInfo *lightInfo, ShadowMap* shadowMap);
     void SetUniforms() override;
 };

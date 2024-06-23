@@ -16,6 +16,7 @@ MATH_DIR = $(SRC_DIR)/math
 MODEL_DIR = $(SRC_DIR)/model
 UTILS_DIR = $(SRC_DIR)/utils
 WINDOW_DIR = $(SRC_DIR)/window
+POSTPROCESS_DIR = $(SRC_DIR)/postprocess
 
 # Source files
 CAMERA_SRC = $(wildcard $(CAMERA_DIR)/*.cpp)
@@ -30,9 +31,10 @@ MATH_SRC = $(wildcard $(MATH_DIR)/*.cpp)
 MODEL_SRC = $(wildcard $(MODEL_DIR)/*.cpp)
 UTILS_SRC = $(wildcard $(UTILS_DIR)/*.cpp)
 WINDOW_SRC = $(wildcard $(WINDOW_DIR)/*.cpp)
+POSTPROCESS_SRC = $(wildcard $(POSTPROCESS_DIR)/*.cpp)
 MAIN_SRC = $(SRC_DIR)/main.cpp
 
-SRC = $(CAMERA_SRC) $(COMMON_SRC) $(CONTROLS_SRC) $(GEOMETRY_SRC) $(GRID_SRC) $(INPUT_SRC) $(LIGHT_SRC) $(MATERIALS_SRC) $(MATH_SRC) $(MODEL_SRC) $(UTILS_SRC) $(WINDOW_SRC) $(MAIN_SRC)
+SRC = $(CAMERA_SRC) $(COMMON_SRC) $(CONTROLS_SRC) $(GEOMETRY_SRC) $(GRID_SRC) $(INPUT_SRC) $(LIGHT_SRC) $(MATERIALS_SRC) $(MATH_SRC) $(MODEL_SRC) $(UTILS_SRC) $(WINDOW_SRC) $(POSTPROCESS_SRC) $(MAIN_SRC)
 
 # Object files
 OBJ = $(SRC:.cpp=.o)
