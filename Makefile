@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -O0 -std=c++11 -Wall -Isrc/common -Isrc/geometry -Isrc/math -Isrc/camera -Isrc/gui/imgui -Isrc/gui/imgui/backend
+CXXFLAGS = -g -O0 -std=c++17 -Wall -Isrc/common -Isrc/geometry -Isrc/math -Isrc/camera -Isrc/gui/imgui -Isrc/gui/imgui/backend
 LDFLAGS = -lGLEW -lGL -lglfw -ldl -lm
 
 # Source directories
