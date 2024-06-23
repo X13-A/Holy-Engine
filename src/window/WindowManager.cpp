@@ -69,7 +69,7 @@ void WindowManager::init(InputManager* inputManager, unsigned int width, unsigne
     glfwSetWindowUserPointer(window, inputManager);
 
     glViewport(0, 0, width, height);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetFramebufferSizeCallback(window, windowResizeCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
     glfwSetScrollCallback(window, scrollCallbaack);
