@@ -53,6 +53,7 @@ void GUI::importAppData()
     GUI_models.clear();
     for (Model *model : *APP_models)
     {
+        selected_index = 0; // Select first by default
         GuiTransform guiTransform = GuiTransform(model->transform->getPosition(), model->transform->getRotation(), model->transform->getScale());
         GuiModel guiModel = GuiModel(model->name, guiTransform);
         GUI_models.push_back(guiModel);

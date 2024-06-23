@@ -22,7 +22,7 @@ const Vec3& Transform::getPosition() const
 	return _position;
 }
 
-// Used for debug, because it does not match position
+// Used for debug, because it did not match position
 Vec3 Transform::getTransformMatrixPosition() const
 {
 	Vec3 pos;
@@ -82,7 +82,6 @@ void Transform::lookat(const Vec3& target, const Vec3& up)
     exit(1);
 }
 
-// TODO: Fix as it's broken.
 void Transform::setRotation(const Vec3& newRotation)
 {
     // Reset the transform matrix to identity
@@ -91,19 +90,16 @@ void Transform::setRotation(const Vec3& newRotation)
     // Apply scale
     _transformMatrix.scale(_scale);
 
-    // Create rotation matrices for each axis
     Mat4 rotationX = Mat4::rotation_x(newRotation.x);
     Mat4 rotationY = Mat4::rotation_y(newRotation.y);
     Mat4 rotationZ = Mat4::rotation_z(newRotation.z);
 
-    // Combine the rotations: rotationZ * rotationY * rotationX
+    // Apply rotation
     Mat4 rotationMatrix = rotationZ * rotationY * rotationX;
     _transformMatrix = _transformMatrix * rotationMatrix;
 
     // Apply translation
     _transformMatrix.translate(_position);
-
-    // Update the rotation
     _rotation = newRotation;
 }
 
@@ -127,7 +123,7 @@ void Transform::translateLocal(const Vec3& offset)
     // Compute the local offset
     Vec3 localOffset = right * offset.x + up * offset.y + forward * offset.z;
 
-    // Update the position and the transformation matrix
+    // Update position
     _position += localOffset;
 	_transformMatrix.translate(localOffset);
 }

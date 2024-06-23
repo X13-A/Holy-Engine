@@ -76,6 +76,13 @@ public:
         models.push_back(atrium);
         atrium->name = "Atrium";
 
+        Model* moai = new Model();
+        loader.load("models/Moai/moai.obj", "models/Moai", moai->shapes, cam, &lightInfo, &shadowMap);
+        moai->transform = new Transform(Vec3(0, -0.5f, 0), Vec3(0, 0, 0), Vec3(0.2, 0.2, 0.2));
+        moai->Init();
+        models.push_back(moai);
+        moai->name = "Moaï";
+        
         // Model* ancientTemple = new Model();
         // loader.load("models/AncientTemple/ancient-temple-stylized.obj", "models/AncientTemple", ancientTemple->shapes, cam, &lightInfo, &shadowMap);
         // ancientTemple->transform = new Transform(Vec3(0.0, 1.0, -32.0), Vec3(0, 180, 0), Vec3(0.5f, 0.5f, 0.5f));
@@ -90,12 +97,7 @@ public:
         // models.push_back(temple);
         // temple->name = "Temple";
 
-        Model* moai = new Model();
-        loader.load("models/Moai/moai.obj", "models/Moai", moai->shapes, cam, &lightInfo, &shadowMap);
-        moai->transform = new Transform(Vec3(0, -0.5f, 0), Vec3(0, 0, 0), Vec3(0.2, 0.2, 0.2));
-        moai->Init();
-        models.push_back(moai);
-        moai->name = "Moaï";
+
 
         // Init grid
         grid.GenerateGrid(20.0, 1.0);
@@ -107,10 +109,10 @@ public:
         lightInfo.ambientLight = Vec3(1, 1, 1) * 0.05;
         lightInfo.volumetricIntensity = 0.15f;
         lightInfo.lightIntensity = 3.0f;
-
+        
+        // Shadow map
         shadowMap.Create();
         shadowMap.Attach(&lightInfo);
-
 
         cam->transform.setPosition(Vec3(0, 5, 25));
         cam->transform.setRotation(Vec3(0, 0, 0));
@@ -125,6 +127,7 @@ public:
         // std::cout << "FPS: " << 1.0 / Time::deltaTime() << std::endl;
         inputManager->update(windowManager->getWindow());
         cameraControls->update(inputManager);
+
         // Move light
         float time = Time::time();
         float speed = 0.1f;
@@ -133,9 +136,6 @@ public:
         float lightZ = radius * sin(time * speed);
         float lightY = 20.0f;
         lightInfo.lightPos = Vec3(lightX, lightY, lightZ);
-        // models[1]->transform->setRotation(Vec3(0, Time::time() * 1, 0));
-        // models[1]->transform->setPosition(lightInfo.lightPos);
-        // lightInfo.lightPos.printValues();
 
         if (inputManager->isKeyPressed(KeyboardKey::Escape))
         {
@@ -170,14 +170,11 @@ public:
             models[i]->Draw(cam);
         }
 
+        // Render to window with post process
         volumetricFog.Render(&shadowMap, cam, &lightInfo);
-
         gui.render();
 
-        // Swap front and back buffers
         glfwSwapBuffers(windowManager->getWindow());
-
-        // Poll for and process events
         glfwPollEvents();
     }
 

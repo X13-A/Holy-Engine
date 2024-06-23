@@ -146,15 +146,9 @@ vec3 fresnelSchlick(float cosTheta, vec3 baseReflectivity)
 
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
 {
-    // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
-
-    // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
-
-    // Check if the fragment is outside the shadow map
     if (projCoords.z > 1.0) return 0.0;
 
     // Bias based on angle between normal and light dir

@@ -25,10 +25,12 @@ float linearizeDepth(float depth)
     return (2.0 * near * far) / (far + near - (depth * 2.0 - 1.0) * (far - near));
 }
 
+// Used for testing viewDir
 float sphereSDF(vec3 p, vec3 center, float radius) {
     return length(p - center) - radius;
 }
 
+// Used for testing viewDir
 vec3 rayMarch(vec3 ro, vec3 rd, vec3 sphereCenter, float sphereRadius, float depth)
 {
     float maxDist = depth; // Maximum distance to march
@@ -55,16 +57,12 @@ vec3 rayMarch(vec3 ro, vec3 rd, vec3 sphereCenter, float sphereRadius, float dep
 
 bool isInShadow(vec4 posLightSpace)
 {
-    // perform perspective divide
     vec3 projCoords = posLightSpace.xyz / posLightSpace.w;
-    // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     if (projCoords.z > 1.0) return false;
-    // get depth value from light's perspective
+
     float lightDepth = texture(ShadowMap, projCoords.xy).r; 
-    // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
-    // check whether current frag pos is in shadow
     float bias = 0.005;
     return currentDepth - bias > lightDepth ? true : false;
 }
