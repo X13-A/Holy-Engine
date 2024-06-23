@@ -30,11 +30,10 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
 
 // Shadow map function
-float ShadowCalculation(vec4 fragPosLightSpace);
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir);
 
 void main()
 {	
-    float shadow = ShadowCalculation(FragPosLightSpace);
     vec2 uv = TexCoords;
 
     vec3 texAlbedo = texture(albedoMap, uv).rgb;
@@ -67,6 +66,7 @@ void main()
     float normalDotLight = max(dot(N, L), 0.0);
     vec3 outgoingRadiance = (diffuseReflectance * albedo / PI + specular) * radiance * normalDotLight; 
   
+    float shadow = ShadowCalculation(FragPosLightSpace, Normal, L);
     vec3 ambient = ambientLight * albedo;
     vec3 color = ambient + outgoingRadiance * (1.0 - shadow);
 
@@ -117,19 +117,35 @@ vec3 fresnelSchlick(float cosTheta, vec3 baseReflectivity)
     return baseReflectivity + (1.0 - baseReflectivity) * pow(1.0 - cosTheta, 5.0);
 }
 
-float ShadowCalculation(vec4 fragPosLightSpace)
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
-    // check whether current frag pos is in shadow
-    float bias = 0.005;
-    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 
+    // Check if the fragment is outside the shadow map
+    if (projCoords.z > 1.0) return 0.0;
+
+    // Bias based on angle between normal and light dir
+    float bias = max(0.005 * (1.0 - dot(normal, lightDir)), 0.001);
+    float shadow = 0.0;
+    
+    // Soft shadowing
+    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+    int samples = 4;
+    float radius = 1.5;
+    for (int x = -samples; x <= samples; ++x)
+    {
+        for (int y = -samples; y <= samples; ++y)
+        {
+            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize * radius).r;
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+    shadow /= (2.0 * samples + 1.0) * (2.0 * samples + 1.0);
     return shadow;
 }

@@ -1,0 +1,76 @@
+# 
+# Wavefront material file
+# Created in RealityCapture
+# Engine version v1.0.3.6310
+# 
+
+newmtl 34Million_Material
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+
+newmtl 34Million_Material_u1_v1
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd 34Million_u1_v1.jpeg
+
+newmtl 34Million_Material_u2_v1
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd 34Million_u2_v1.jpeg
+
+newmtl 34Million_Material_u3_v1
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd 34Million_u3_v1.jpeg
+
+newmtl 34Million_Material_u1_v2
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd 34Million_u1_v2.jpeg
+
+newmtl 34Million_Material_u2_v2
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd 34Million_u2_v2.jpeg
+
+newmtl 34Million_Material_u3_v2
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd 34Million_u3_v2.jpeg
+
+newmtl 34Million_Material_u1_v3
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd 34Million_u1_v3.jpeg
+
+newmtl 34Million_Material_u2_v3
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd 34Million_u2_v3.jpeg
