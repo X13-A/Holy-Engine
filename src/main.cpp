@@ -41,8 +41,8 @@ public:
     ShadowMap shadowMap;
     std::vector<Model *> models;
 
-    int width = 1280;
-    int height = 720;
+    int width = 800;
+    int height = 600;
     GUI gui;
 
     void Init()
