@@ -8,6 +8,8 @@ struct SceneLightInfo
     Vec3 lightPos;
     Vec3 lightColor;
     Vec3 ambientLight;
+    float lightIntensity;
+    float volumetricIntensity;
 };
 
 #endif

@@ -1,6 +1,9 @@
 #ifndef GUI_HPP
 #define GUI_HPP
 
+// Ensure GLEW is included before any other OpenGL headers
+#include <GL/glew.h>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -8,50 +11,56 @@
 #include <vector>
 #include <string>
 #include <filesystem>
+#include "../model/Model.hpp"
+#include "../light/SceneLightInfo.hpp"
 
-// Classe GuiTransform
-class GuiTransform {
+
+class GuiTransform 
+{
 public:
     float position[3];
     float rotation[3];
     float scale[3];
 
+    Vec3 getPosition() const;
+    Vec3 getRotation() const;
+    Vec3 getScale() const;
     GuiTransform();
+    GuiTransform(const Vec3 &pos, const Vec3 &rot, const Vec3 &scale);
 };
 
-// Classe Object
-class Object {
+class GuiModel
+{
 public:
     std::string name;
     GuiTransform transform;
-    char folderPath[256];
 
-    Object(const std::string &name, const std::string &path);
+    GuiModel(const std::string &name, GuiTransform transform);
 };
 
-// Classe GUI
-class GUI {
+class GUI
+{
 public:
     GUI();
     ~GUI();
-    void run();
+    void init(GLFWwindow *mainWindow, std::vector<Model*>* app_models, SceneLightInfo* app_lightInfo); // Initialisation avec une fenêtre existante
+    void render(); // Rendu de l'interface ImGui
+    void cleanup(); // Nettoyage d'ImGui
 
 private:
     GLFWwindow *window;
-    std::vector<Object> objects;
     int selected_index;
-    float color[3];
-    float intensity;
-
-    void init();
-    void mainLoop();
+    std::vector<GuiModel> GUI_models;
+    float GUI_lightColor[3];
+    float GUI_lightIntensity;
+    float GUI_volumetricLightIntensity;
+    std::vector<Model*>* APP_models;
+    SceneLightInfo* APP_lightInfo;
     void renderSceneWindow();
     void renderColorWindow();
-    void cleanup();
     static void glfwErrorCallback(int error, const char *description);
-    void printTransform(const std::string &name, const GuiTransform &transform);
-    void copyDirectory(const std::filesystem::path &source, const std::filesystem::path &destination);
-    std::vector<Object> loadObjectsFromDirectory(const std::string &directory);
+    void updateTransform(const std::string &name, const GuiTransform &transform);
+    void importAppData();
 };
 
-#endif // GUI_HPP
+#endif

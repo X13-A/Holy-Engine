@@ -97,9 +97,9 @@ void VolumetricFog::Render(ShadowMap* shadowMap, Camera* cam, SceneLightInfo* li
         glUniformMatrix4fv(glGetUniformLocation(framebufferProgram, "cameraInvView"), 1, GL_FALSE, invView.data());
         glUniformMatrix4fv(glGetUniformLocation(framebufferProgram, "lightMatrix"), 1, GL_FALSE, shadowMap->GetLightSpaceMatrix().data());
         glUniform3f(glGetUniformLocation(framebufferProgram, "cameraPos"), cam->transform.getPosition().x, cam->transform.getPosition().y, cam->transform.getPosition().z);
-        glUniform3f(glGetUniformLocation(framebufferProgram, "lightColor"), lightInfo->lightColor.x, lightInfo->lightColor.y, lightInfo->lightColor.z);
+        glUniform3f(glGetUniformLocation(framebufferProgram, "lightColor"), lightInfo->lightColor.x * lightInfo->lightIntensity, lightInfo->lightColor.y * lightInfo->lightIntensity, lightInfo->lightColor.z * lightInfo->lightIntensity);
         glUniform1f(glGetUniformLocation(framebufferProgram, "time"), Time::time());
-        glUniform1f(glGetUniformLocation(framebufferProgram, "lightShaftIntensity"), 0.2f);
+        glUniform1f(glGetUniformLocation(framebufferProgram, "lightShaftIntensity"), lightInfo->volumetricIntensity);
         glUniform1f(glGetUniformLocation(framebufferProgram, "lightNoise"), 2.5f);
         glUniform1i(glGetUniformLocation(framebufferProgram, "lightSteps"), 20);
         glDisable(GL_DEPTH_TEST);        

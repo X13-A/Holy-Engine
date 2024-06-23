@@ -12,6 +12,7 @@ class Model
 public:
     Transform* transform;
     std::vector<Shape*> shapes;
+    std::string name;
 
     void Init();
     void Draw(Camera *camera);

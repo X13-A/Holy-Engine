@@ -1,6 +1,7 @@
 #include "CreativeControls.hpp"
 #include "../input/InputManager.hpp"
 #include "../math/Mat4.hpp"
+#include <imgui.h>
 
 CreativeControls::CreativeControls(Camera* camera, float moveSpeed, float rotateSpeed) : CameraControls(camera), moveSpeed(moveSpeed), rotateSpeed(rotateSpeed)
 {

@@ -9,6 +9,7 @@ public:
     Mesh* mesh;
     Material* material;
     void Init();
+    void Destroy();
     void Draw(Camera *camera, Transform *transform);
 };
 

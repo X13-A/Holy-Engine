@@ -14,7 +14,7 @@ void LitMaterial::SetUniforms()
     glUniform3f(loc_lightPos, lightDir.x, lightDir.y, lightDir.z);
 
     auto loc_lightColor = glGetUniformLocation(shaderProgram, "lightColor");
-    glUniform3f(loc_lightColor, lightInfo->lightColor.x, lightInfo->lightColor.y, lightInfo->lightColor.z);
+    glUniform3f(loc_lightColor, lightInfo->lightColor.x * lightInfo->lightIntensity, lightInfo->lightColor.y * lightInfo->lightIntensity, lightInfo->lightColor.z * lightInfo->lightIntensity);
 
     auto loc_ambientLight = glGetUniformLocation(shaderProgram, "ambientLight");
     glUniform3f(loc_ambientLight, lightInfo->ambientLight.x, lightInfo->ambientLight.y, lightInfo->ambientLight.z);

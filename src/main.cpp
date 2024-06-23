@@ -24,7 +24,7 @@
 #include "light/SceneLightInfo.hpp"
 #include "light/ShadowMap.hpp"
 #include "../postprocess/VolumetricFog.hpp"
-
+#include "gui/Gui.hpp"
 
 struct Application
 {
@@ -41,8 +41,9 @@ public:
     ShadowMap shadowMap;
     std::vector<Model *> models;
 
-    int width = 640;
-    int height = 640;
+    int width = 1280;
+    int height = 720;
+    GUI gui;
 
     void Init()
     {
@@ -73,60 +74,60 @@ public:
         atrium->transform = new Transform(Vec3(0.0, 0.0, 0), Vec3(0, 0, 0), Vec3(1.25, 1.25, 1.25));
         atrium->Init();
         models.push_back(atrium);
+        atrium->name = "Atrium";
 
-        // ModelLoader loader;
         // Model* ancientTemple = new Model();
         // loader.load("models/AncientTemple/ancient-temple-stylized.obj", "models/AncientTemple", ancientTemple->shapes, cam, &lightInfo, &shadowMap);
-        // ancientTemple->transform = new Transform(Vec3(0.0, 0.0, 0), Vec3(0, 0, 0), Vec3(0.5f, 0.5f, 0.5f));
+        // ancientTemple->transform = new Transform(Vec3(0.0, 1.0, -32.0), Vec3(0, 180, 0), Vec3(0.5f, 0.5f, 0.5f));
         // ancientTemple->Init();
         // models.push_back(ancientTemple);
-
-        // Model* rafale = new Model();
-        // loader.load("models/Rafale/Rafale.obj", "models/Rafale", rafale->shapes, cam, &lightInfo, &shadowMap);
-        // rafale->transform = new Transform(Vec3(0, 3.0, 0), Vec3(0, 90, 0), Vec3(0.05, 0.05, 0.05));
-        // rafale->Init();
-        // models.push_back(rafale);
+        // ancientTemple->name = "Ancient Temple";
 
         // Model* temple = new Model();
         // loader.load("models/EvoraTemple/34Million.obj", "models/EvoraTemple", temple->shapes, cam, &lightInfo, &shadowMap);
         // temple->transform = new Transform(Vec3(0, -3, 0), Vec3(-90, -40, 0), Vec3(1, 1, 1));
         // temple->Init();
         // models.push_back(temple);
+        // temple->name = "Temple";
 
         Model* moai = new Model();
         loader.load("models/Moai/moai.obj", "models/Moai", moai->shapes, cam, &lightInfo, &shadowMap);
         moai->transform = new Transform(Vec3(0, -0.5f, 0), Vec3(0, 0, 0), Vec3(0.2, 0.2, 0.2));
         moai->Init();
         models.push_back(moai);
+        moai->name = "Moaï";
 
         // Init grid
         grid.GenerateGrid(20.0, 1.0);
         grid.Init();
 
         // Lighting
-        lightInfo.lightColor = Vec3(1.0, 0.96, 0.71) * 3;
+        lightInfo.lightColor = Vec3(1.0, 0.96, 0.71);
         lightInfo.lightPos = Vec3(0, 10, 0);
         lightInfo.ambientLight = Vec3(1, 1, 1) * 0.05;
+        lightInfo.volumetricIntensity = 0.15f;
+        lightInfo.lightIntensity = 3.0f;
 
         shadowMap.Create();
         shadowMap.Attach(&lightInfo);
 
-        cam->transform.setPosition(Vec3(-5, 5, -5));
-        cam->transform.setRotation(Vec3(-90, 0, 0));
+
+        cam->transform.setPosition(Vec3(0, 5, 25));
+        cam->transform.setRotation(Vec3(0, 0, 0));
 
         volumetricFog.Init(width, height);
+        gui.init(windowManager->getWindow(), &models, &lightInfo);
     }
 
     void Update()
     {
         Time::update();
-        std::cout << "FPS: " << 1.0 / Time::deltaTime() << std::endl;
+        // std::cout << "FPS: " << 1.0 / Time::deltaTime() << std::endl;
         inputManager->update(windowManager->getWindow());
         cameraControls->update(inputManager);
-
         // Move light
         float time = Time::time();
-        float speed = 1.0f;
+        float speed = 0.1f;
         float radius = 20.0f;
         float lightX = radius * cos(time * speed);
         float lightZ = radius * sin(time * speed);
@@ -160,7 +161,7 @@ public:
         
         // Bind the custom framebuffer (FBO)
         glBindFramebuffer(GL_FRAMEBUFFER, volumetricFog.FBO);
-		windowManager->clear(Vec4(1.0, 0.99, 0.90, 1.0));
+		windowManager->clear(Vec4(lightInfo.lightColor.x, lightInfo.lightColor.y, lightInfo.lightColor.z, 1.0));
 
         // Draw scene to FBO
         grid.Draw(*cam);
@@ -170,7 +171,8 @@ public:
         }
 
         volumetricFog.Render(&shadowMap, cam, &lightInfo);
-        
+
+        gui.render();
 
         // Swap front and back buffers
         glfwSwapBuffers(windowManager->getWindow());
@@ -181,7 +183,8 @@ public:
 
     void Terminate()
     {
-        // TODO: Deallocate resources
+        // TODO: Deallocate all resources
+        gui.cleanup();
         glfwTerminate();
     }
 };
