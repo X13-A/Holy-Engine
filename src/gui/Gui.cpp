@@ -3,6 +3,8 @@
 #include <fstream>
 #include "../math/Vec4.hpp"
 #include "../math/Vec3.hpp"
+#include "../utils/Time.hpp"
+#include <string>
 
 // Implémentation de la classe GuiTransform
 GuiTransform::GuiTransform(const Vec3& pos, const Vec3& rot, const Vec3& scale)
@@ -92,7 +94,7 @@ void GUI::render()
 
     renderSceneWindow();
     renderColorWindow();
-
+    renderMetrics();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
@@ -104,6 +106,13 @@ void GUI::cleanup()
     ImGui::DestroyContext();
 }
 
+void GUI::renderMetrics()
+{
+    ImGui::Begin("Performance");
+    ImGui::Text((std::to_string(Time::FPS()) + " FPS").c_str());
+    ImGui::End();
+}
+
 void GUI::renderSceneWindow()
 {
     ImGui::Begin("Scene models");
@@ -113,7 +122,7 @@ void GUI::renderSceneWindow()
         ImGui::PushID(i);
         ImGui::SameLine();
         std::string label = GUI_models[i].name + " (" + std::to_string((*APP_models)[i]->shapes.size()) + " meshes)";
-        if (ImGui::Button(label.c_str())) 
+        if (ImGui::Button(label.c_str()));
         {
             selected_index = i;
         }

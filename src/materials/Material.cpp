@@ -7,6 +7,26 @@
 #include "../common/stb_image.h"
 #include "../common/GLShader.h"
 
+Material::Material() : albedoTexID(0), shader(nullptr)
+{
+}
+
+Material::~Material()
+{
+    Release();
+}
+
+void Material::Release()
+{
+    if (albedoTexID)
+    {
+        glDeleteTextures(1, &albedoTexID);
+        albedoTexID = 0;
+    }
+    delete shader;
+    shader = nullptr;
+}
+
 void Material::Init(std::string vert_path, std::string frag_path)
 {
     this->vert_path = vert_path;

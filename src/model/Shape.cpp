@@ -1,6 +1,34 @@
 #include "Shape.hpp"
 #include "../geometry/Transform.hpp"
 
+
+Shape::Shape()
+    : mesh(nullptr), material(nullptr)
+{
+}
+
+Shape::~Shape()
+{
+    Release();
+}
+
+void Shape::Release()
+{
+    if (mesh)
+    {
+        mesh->Release();
+        delete mesh;
+        mesh = nullptr;
+    }
+    if (material)
+    {
+        // For now, each shape has its own material
+        material->Release();
+        delete material;
+        material = nullptr;
+    }
+}
+
 void Shape::Init()
 {
     mesh->Init();

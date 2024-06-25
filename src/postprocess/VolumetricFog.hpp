@@ -28,6 +28,10 @@ public:
     GLuint framebufferProgram;
     GLuint rectVAO, rectVBO;
 
+    VolumetricFog();
+    ~VolumetricFog();
+    void Release();
+
     void Init(int width, int height);
     void Render(ShadowMap *shadowMap, Camera *cam, SceneLightInfo *lightInfo);
 };

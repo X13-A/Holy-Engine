@@ -7,6 +7,44 @@
 #include "../light/ShadowMap.hpp"
 #include "../light/SceneLightInfo.hpp"
 
+VolumetricFog::VolumetricFog() : FBO(0), framebufferTexture(0), depthTexture(0), framebufferProgram(0), rectVAO(0), rectVBO(0)
+{
+}
+
+VolumetricFog::~VolumetricFog()
+{
+    Release();
+}
+
+void VolumetricFog::Release()
+{
+    if (rectVBO)
+    {
+        glDeleteBuffers(1, &rectVBO);
+        rectVBO = 0;
+    }
+    if (rectVAO)
+    {
+        glDeleteVertexArrays(1, &rectVAO);
+        rectVAO = 0;
+    }
+    if (framebufferTexture)
+    {
+        glDeleteTextures(1, &framebufferTexture);
+        framebufferTexture = 0;
+    }
+    if (depthTexture)
+    {
+        glDeleteTextures(1, &depthTexture);
+        depthTexture = 0;
+    }
+    if (FBO)
+    {
+        glDeleteFramebuffers(1, &FBO);
+        FBO = 0;
+    }
+}
+
 void VolumetricFog::Init(int width, int height)
 {
     // Create Frame Buffer Object

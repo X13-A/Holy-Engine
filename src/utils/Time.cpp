@@ -20,3 +20,8 @@ void Time::update()
     _deltaTime = currentTime - lastTime;
     lastTime = currentTime;
 }
+
+double Time::FPS()
+{
+    return 1.0f / Time::deltaTime();
+}

@@ -6,6 +6,35 @@
 #include "../math/Mat4.hpp";
 #include "../geometry/ModelLoader.hpp"
 
+Model::Model() : transform(nullptr)
+{
+}
+
+Model::~Model()
+{
+    Release();
+}
+
+void Model::Release()
+{
+    if (transform)
+    {
+        delete transform;
+        transform = nullptr;
+    }
+
+    for (Shape* shape : shapes)
+    {
+        if (shape)
+        {
+            shape->Release();
+            delete shape;
+        }
+    }
+    shapes.clear();
+}
+
+
 void Model::Init()
 {
     for (Shape* shape : shapes)

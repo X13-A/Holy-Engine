@@ -4,6 +4,37 @@
 #include "../light/SceneLightInfo.hpp"
 #include "../light/ShadowMap.hpp"
 
+LitMaterial::LitMaterial()
+    : roughness(0.0f), metallic(0.0f), camera(nullptr), lightInfo(nullptr), shadowMap(nullptr),
+      normalTexID(0), hasNormalMap(false), metallicTexID(0), hasMetallicMap(false), roughnessTexID(0), hasRoughnessMap(false)
+{
+}
+
+LitMaterial::~LitMaterial()
+{
+    Release();
+}
+
+void LitMaterial::Release()
+{
+    if (normalTexID)
+    {
+        glDeleteTextures(1, &normalTexID);
+        normalTexID = 0;
+    }
+    if (metallicTexID)
+    {
+        glDeleteTextures(1, &metallicTexID);
+        metallicTexID = 0;
+    }
+    if (roughnessTexID)
+    {
+        glDeleteTextures(1, &roughnessTexID);
+        roughnessTexID = 0;
+    }
+    Material::Release();
+}
+
 void LitMaterial::SetUniforms()
 {
     Material::SetUniforms();

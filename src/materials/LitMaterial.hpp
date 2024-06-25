@@ -30,8 +30,11 @@ public:
     std::string roughnessPath;
     bool hasRoughnessMap;
 
-    void Attach(Camera *camera, SceneLightInfo *lightInfo, ShadowMap* shadowMap);
+    LitMaterial();
+    ~LitMaterial();
+    void Attach(Camera *camera, SceneLightInfo *lightInfo, ShadowMap *shadowMap);
     void SetUniforms() override;
+    void Release();
 };
 
 #endif

@@ -21,11 +21,14 @@ private:
     void CreateShader();
 
 public:
+    ShadowMap();
+    ~ShadowMap();
     GLuint GetDepthMap() const;
     const Mat4& GetLightSpaceMatrix() const;
     void Create();
     void Compute(std::vector<Model*>& models);
     void Attach(SceneLightInfo *lightInfo);
+    void Release();
 };
 
 #endif

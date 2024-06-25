@@ -16,8 +16,11 @@ public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
+    Mesh();
+    ~Mesh();
+
     void Init();
-    void Destroy();
+    void Release();
 };
 
 #endif

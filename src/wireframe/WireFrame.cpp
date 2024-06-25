@@ -1,4 +1,4 @@
-#include "Grid.hpp"
+#include "WireFrame.hpp"
 #include "../common/GLShader.h"
 #include "../math/Mat4.hpp"
 #include <GLFW/glfw3.h>
@@ -72,11 +72,32 @@ void WireFrame::Init()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void WireFrame::Destroy()
+WireFrame::WireFrame() : VBO(0), VAO(0), EBO(0)
 {
-    shader->Destroy();
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+}
+
+WireFrame::~WireFrame()
+{
+    Release();
+}
+
+void WireFrame::Release()
+{
+    if (VAO)
+    {
+        glDeleteVertexArrays(1, &VAO);
+        VAO = 0;
+    }
+    if (VBO)
+    {
+        glDeleteBuffers(1, &VBO);
+        VBO = 0;
+    }
+    if (EBO)
+    {
+        glDeleteBuffers(1, &EBO);
+        EBO = 0;
+    }
 }
 
 void WireFrame::Draw(Camera& camera)

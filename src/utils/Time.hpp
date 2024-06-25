@@ -22,6 +22,8 @@ class Time
         /// GLFW time
         /// </summary>
         static double time();
+
+        static double FPS();
 };
 
 #endif

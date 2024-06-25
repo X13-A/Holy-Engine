@@ -58,6 +58,7 @@ private:
     SceneLightInfo* APP_lightInfo;
     void renderSceneWindow();
     void renderColorWindow();
+    void renderMetrics();
     static void glfwErrorCallback(int error, const char *description);
     void updateTransform(const std::string &name, const GuiTransform &transform);
     void importAppData();

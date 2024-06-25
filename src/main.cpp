@@ -10,7 +10,7 @@
 #include "math/Vec3.hpp"
 #include "math/Vec2.hpp"
 #include "geometry/Mesh.hpp"
-#include "grid/Grid.hpp"
+#include "wireframe/WireFrame.hpp"
 #include "math/Mat4.hpp"
 #include "camera/Camera.hpp"
 #include "geometry/Transform.hpp"
@@ -97,8 +97,6 @@ public:
         // models.push_back(temple);
         // temple->name = "Temple";
 
-
-
         // Init grid
         grid.GenerateGrid(20.0, 1.0);
         grid.Init();
@@ -107,11 +105,11 @@ public:
         lightInfo.lightColor = Vec3(1.0, 0.96, 0.71);
         lightInfo.lightPos = Vec3(0, 10, 0);
         lightInfo.ambientLight = Vec3(1, 1, 1) * 0.05;
-        lightInfo.volumetricIntensity = 0.15f;
+        lightInfo.volumetricIntensity = 0.15f * 0;
         lightInfo.lightIntensity = 3.0f;
         
         // Shadow map
-        shadowMap.Create();
+        // shadowMap.Create();
         shadowMap.Attach(&lightInfo);
 
         cam->transform.setPosition(Vec3(0, 5, 25));
@@ -140,7 +138,6 @@ public:
         if (inputManager->isKeyPressed(KeyboardKey::Escape))
         {
             Terminate();
-            exit(0);
         }
 
         // Ensure consistent calculations with matrices
@@ -156,7 +153,7 @@ public:
     void Render()
     {
 		windowManager->clear(Vec4(1.0, 0, 0, 1.0));
-        shadowMap.Compute(models);
+        // shadowMap.Compute(models);
         glViewport(0, 0, width, height);
         
         // Bind the custom framebuffer (FBO)
@@ -180,9 +177,25 @@ public:
 
     void Terminate()
     {
-        // TODO: Deallocate all resources
+        // Deallocate all resources
+        grid.Release();
+        volumetricFog.Release();
+        shadowMap.Release();
+        for (Model* model : models)
+        {
+            model->Release();
+            delete model;
+            model = nullptr;
+        }
+        models.clear();
+        delete windowManager;
+        delete inputManager;
+        delete cameraControls;
+        delete cam;
+
         gui.cleanup();
         glfwTerminate();
+        exit(0);
     }
 };
 

@@ -8,7 +8,7 @@ CAMERA_DIR = $(SRC_DIR)/camera
 COMMON_DIR = $(SRC_DIR)/common
 CONTROLS_DIR = $(SRC_DIR)/controls
 GEOMETRY_DIR = $(SRC_DIR)/geometry
-GRID_DIR = $(SRC_DIR)/grid
+WIREFRAME_DIR = $(SRC_DIR)/wireframe
 GUI_DIR = $(SRC_DIR)/gui
 INPUT_DIR = $(SRC_DIR)/input
 LIGHT_DIR = $(SRC_DIR)/light
@@ -24,7 +24,7 @@ CAMERA_SRC = $(wildcard $(CAMERA_DIR)/*.cpp)
 COMMON_SRC = $(wildcard $(COMMON_DIR)/*.cpp)
 CONTROLS_SRC = $(wildcard $(CONTROLS_DIR)/*.cpp)
 GEOMETRY_SRC = $(wildcard $(GEOMETRY_DIR)/*.cpp)
-GRID_SRC = $(wildcard $(GRID_DIR)/*.cpp)
+WIREFRAME_SRC = $(wildcard $(WIREFRAME_DIR)/*.cpp)
 GUI_SRC = $(wildcard $(GUI_DIR)/*.cpp)
 IMGUI_SRC = $(wildcard $(GUI_DIR)/imgui/*.cpp)
 IMGUI_BACKEND_SRC = $(wildcard $(GUI_DIR)/imgui/backend/*.cpp)
@@ -38,7 +38,7 @@ WINDOW_SRC = $(wildcard $(WINDOW_DIR)/*.cpp)
 POSTPROCESS_SRC = $(wildcard $(POSTPROCESS_DIR)/*.cpp)
 MAIN_SRC = $(SRC_DIR)/main.cpp
 
-SRC = $(CAMERA_SRC) $(COMMON_SRC) $(CONTROLS_SRC) $(GEOMETRY_SRC) $(GRID_SRC) $(INPUT_SRC) $(LIGHT_SRC) $(MATERIALS_SRC) $(MATH_SRC) $(MODEL_SRC) $(UTILS_SRC) $(WINDOW_SRC) $(POSTPROCESS_SRC)  $(GUI_SRC) $(IMGUI_SRC) $(IMGUI_BACKEND_SRC) $(MAIN_SRC)
+SRC = $(CAMERA_SRC) $(COMMON_SRC) $(CONTROLS_SRC) $(GEOMETRY_SRC) $(WIREFRAME_SRC) $(INPUT_SRC) $(LIGHT_SRC) $(MATERIALS_SRC) $(MATH_SRC) $(MODEL_SRC) $(UTILS_SRC) $(WINDOW_SRC) $(POSTPROCESS_SRC)  $(GUI_SRC) $(IMGUI_SRC) $(IMGUI_BACKEND_SRC) $(MAIN_SRC)
 
 # Object files
 OBJ = $(SRC:.cpp=.o)

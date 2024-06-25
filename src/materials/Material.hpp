@@ -16,9 +16,12 @@ public:
     std::string vert_path;
     std::string frag_path;
 
+    Material();
+    ~Material();
     virtual void Init(std::string vert_path, std::string frag_path);
     virtual void SetUniforms();
     void LoadMap(const std::string& filename, GLuint* texID);
+    void Release();
 };
 
 #endif

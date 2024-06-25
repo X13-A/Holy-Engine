@@ -2,6 +2,39 @@
 #include "SceneLightInfo.hpp"
 #include "GL/glew.h"
 
+ShadowMap::ShadowMap()
+    : lightInfo(nullptr), shader(nullptr), width(0), height(0), FBO(0), depthMap(0)
+{
+}
+
+ShadowMap::~ShadowMap()
+{
+    Release();
+}
+
+void ShadowMap::Release()
+{
+    if (FBO)
+    {
+        glDeleteFramebuffers(1, &FBO);
+        FBO = 0;
+    }
+    if (depthMap)
+    {
+        glDeleteTextures(1, &depthMap);
+        depthMap = 0;
+    }
+
+    // Later, multiple shadow maps might shader same shader. But not for now
+    if (shader)
+    {
+        shader->Destroy();
+        delete shader;
+        shader = nullptr;
+    }
+}
+
+
 void ShadowMap::Attach(SceneLightInfo* lightInfo)
 {
     this->lightInfo = lightInfo;

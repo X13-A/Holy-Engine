@@ -14,8 +14,12 @@ public:
     std::vector<Shape*> shapes;
     std::string name;
 
+    Model();
+    ~Model();
+    
     void Init();
     void Draw(Camera *camera);
+    void Release();
 };
 
 #endif

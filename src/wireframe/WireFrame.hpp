@@ -1,5 +1,5 @@
-#ifndef GRID_HPP
-#define GRID_HPP
+#ifndef WIREFRAME_HPP
+#define WIREFRAME_HPP
 
 #include <GL/glew.h>
 #include <vector>
@@ -16,9 +16,12 @@ public:
     std::vector<Vec3> vertices;
     std::vector<unsigned int> indices;
 
+    WireFrame();
+    ~WireFrame();
+
     void GenerateGrid(int size, float spacing);
     void Init();
-    void Destroy();
+    void Release();
     void Draw(Camera& camera);
 };
 

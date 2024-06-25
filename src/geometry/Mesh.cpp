@@ -22,9 +22,30 @@ void Mesh::Init()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Mesh::Destroy()
+Mesh::Mesh() : VBO(0), VAO(0), EBO(0)
 {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+}
+
+Mesh::~Mesh()
+{
+    Release();
+}
+
+void Mesh::Release()
+{
+    if (VAO)
+    {
+        glDeleteVertexArrays(1, &VAO);
+        VAO = 0;
+    }
+    if (VBO)
+    {
+        glDeleteBuffers(1, &VBO);
+        VBO = 0;
+    }
+    if (EBO)
+    {
+        glDeleteBuffers(1, &EBO);
+        EBO = 0;
+    }
 }
