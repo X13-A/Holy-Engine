@@ -50,6 +50,7 @@ void main()
     float roughness = roughnessUniform; 
 
     // Read maps if available
+    vec4 albedoRGBA = texture(albedoMap, uv);
     if (hasNormalMap)
     {
         // TODO: unpack normal & convert them to world space
@@ -62,8 +63,6 @@ void main()
     {
         metallic = texture(metallicMap, uv).r;
     }
-
-    vec4 albedoRGBA = texture(albedoMap, uv);
 
     vec3 albedo = albedoRGBA.rgb;
     float alpha = albedoRGBA.a;
@@ -93,7 +92,9 @@ void main()
     float normalDotLight = max(dot(N, L), 0.0);
     vec3 outgoingRadiance = (diffuseReflectance * albedo / PI + specular) * radiance * normalDotLight; 
   
-    float shadow = ShadowCalculation(FragPosLightSpace, Normal, L);
+    float shadow = ShadowCalculation(FragPosLightSpace, N, L);
+    // FragColor = vec4(shadow, shadow, shadow, 1);
+    //return;
     vec3 ambient = ambientLight * albedo;
     vec3 color = ambient + outgoingRadiance * (1.0 - shadow);
 

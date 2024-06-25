@@ -43,6 +43,7 @@ class GUI
 public:
     GUI();
     ~GUI();
+    GLuint debugTextureID;
     void init(GLFWwindow *mainWindow, std::vector<Model*>* app_models, SceneLightInfo* app_lightInfo); // Initialisation avec une fenêtre existante
     void render(); // Rendu de l'interface ImGui
     void cleanup(); // Nettoyage d'ImGui

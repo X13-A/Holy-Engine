@@ -85,7 +85,7 @@ public:
         
         // Model* ancientTemple = new Model();
         // loader.load("models/AncientTemple/ancient-temple-stylized.obj", "models/AncientTemple", ancientTemple->shapes, cam, &lightInfo, &shadowMap);
-        // ancientTemple->transform = new Transform(Vec3(0.0, 1.0, -32.0), Vec3(0, 180, 0), Vec3(0.5f, 0.5f, 0.5f));
+        // ancientTemple->transform = new Transform(Vec3(0.0, 1.0, 0.0), Vec3(0, 180, 0), Vec3(0.5f, 0.5f, 0.5f));
         // ancientTemple->Init();
         // models.push_back(ancientTemple);
         // ancientTemple->name = "Ancient Temple";
@@ -109,7 +109,7 @@ public:
         lightInfo.lightIntensity = 3.0f;
         
         // Shadow map
-        // shadowMap.Create();
+        shadowMap.Create();
         shadowMap.Attach(&lightInfo);
 
         cam->transform.setPosition(Vec3(0, 5, 25));
@@ -117,12 +117,12 @@ public:
 
         volumetricFog.Init(width, height);
         gui.init(windowManager->getWindow(), &models, &lightInfo);
+        gui.debugTextureID = shadowMap.GetDepthMap();
     }
 
     void Update()
     {
         Time::update();
-        // std::cout << "FPS: " << 1.0 / Time::deltaTime() << std::endl;
         inputManager->update(windowManager->getWindow());
         cameraControls->update(inputManager);
 
@@ -153,7 +153,7 @@ public:
     void Render()
     {
 		windowManager->clear(Vec4(1.0, 0, 0, 1.0));
-        // shadowMap.Compute(models);
+        shadowMap.Compute(models);
         glViewport(0, 0, width, height);
         
         // Bind the custom framebuffer (FBO)

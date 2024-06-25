@@ -110,6 +110,8 @@ void GUI::renderMetrics()
 {
     ImGui::Begin("Performance");
     ImGui::Text((std::to_string(Time::FPS()) + " FPS").c_str());
+    ImVec2 textureSize(256, 256);
+    ImGui::Image((void*)(intptr_t) debugTextureID, textureSize);
     ImGui::End();
 }
 
